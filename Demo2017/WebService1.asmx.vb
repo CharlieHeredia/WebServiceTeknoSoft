@@ -76,6 +76,12 @@ Public Class WebService1
 
     End Function
     <WebMethod()> _
+    Public Function ConsultaDocumentosInterna(ByVal condicion As String, ByVal tabla As String) As Documento
+        Dim documentoConsulta As New Documento 'CREACION DE VARIBLE DE LA CLASE Documento.'
+        documentoConsulta = ConsultarDocumentoSQL(condicion, tabla)
+        Return documentoConsulta
+    End Function
+    <WebMethod()> _
     Public Function ConfigurarDocumento(ByVal idDocumento As String, ByVal aFolio As String, ByVal aNumMoneda As String, ByVal aTipoCambio As String, ByVal aImporte As String, ByVal aDescuentoDoc1 As String, ByVal aDescuentoDoc2 As String, ByVal aSistemasOrigen As String, ByVal aCodConcepto As String, ByVal aSerie As String, ByVal aFecha As String, ByVal aCodigoCteProv As String, ByVal aCodigoAgente As String, ByVal aReferencia As String, ByVal aAfecta As String, ByVal aGasto1 As String, ByVal aGasto2 As String, ByVal aGasto3 As String, ByVal NombreTabla As String, ByVal aRazonSocial As String) As Boolean
         Try
             If Directory.Exists("C:\TeknoCom") = False Then 'VERIFICACIÓN DE EXISTENCIA DE DIRECTORIO. EN CASO DE NO EXISTIR ENTRA A LA CONDICIÓN'

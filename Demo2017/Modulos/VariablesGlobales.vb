@@ -1,5 +1,5 @@
 ﻿Module VariablesGlobales
-    Public motorDB As String 'PARA SABER EL TIPO DE CONEXIÓN QUE SE UTILIZARÁ.'
+    Public motorDB As String = 1 'PARA SABER EL TIPO DE CONEXIÓN QUE SE UTILIZARÁ.'
     Public hostname As String 'NOMBRE DE HOST O INSTANCIA.'
     Public BaseDatos As String 'NOMBRE  DE LA BASE DE DATOS.'
     Public usuarioBD As String 'NOMBRE DEL USUARIO DE LA BASE DE DATOS.'

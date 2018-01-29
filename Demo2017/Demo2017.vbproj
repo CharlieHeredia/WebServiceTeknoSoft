@@ -98,6 +98,7 @@
     <Compile Include="Clases\Receptor.vb" />
     <Compile Include="Clases\TCPControl.vb" />
     <Compile Include="Clases\Traslado.vb" />
+    <Compile Include="Modulos\Funciones_Globales.vb" />
     <Compile Include="Modulos\VariablesGlobales.vb" />
     <Compile Include="Clases\Movimiento.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
