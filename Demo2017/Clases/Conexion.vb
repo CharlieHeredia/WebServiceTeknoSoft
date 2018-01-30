@@ -125,6 +125,9 @@ Public Class Conexion
     End Function
 
     Public Function InsertarConfiguracionSocket(DireccionEmpresa As String, aRutaXML As String, aCodConcepto As String, aUUID As String, aRutaDDA As String, aPass As String, aRutaFormato As String)
+        'FUNCIÓN QUE GUARDA DATOS EN LA BASE DE DATOS PARA LA CREACIÓN DEL ARCHIVO XML.
+        'LA FUNCIÓN CREA LA BASE DE DATOS Y LA TABLA EN CASO DE NO EXISTIR.
+        'LOS DATOS SE GUARDAN EN SQL, LA BASE Y LA TABLA SON ESTATICAS HASTA EL MOMENTO 30/01/2018
         Try
             Dim NombreBaseDatos As String = "Tacos" 'NOMBRE DE LA BASE DE DATOS.'
             Dim NombreTabla As String = "taquitos" 'NOMBRE DE TABLA EN LA BASE DE DATOS.'

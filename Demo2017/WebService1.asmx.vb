@@ -44,37 +44,38 @@ Public Class WebService1
         End Try
         Return DatosConexion
     End Function
-    <WebMethod()> _
-    Public Function TipoConexion(ByVal Tipo As String) As Boolean 'FUNCIÓN PARA SELECCIONAR EL TIPO DE CONEXIÓN.'
-        Select Case Tipo
-            Case "1" ' 1 PARA CONEXIÓN DE TIPO SQL.' 
-                motorDB = Tipo 'SQL'
-            Case "2" ' 2 PARA CONEXIÓN DE TIPO DBF.'
-                motorDB = Tipo 'DBF'
-        End Select
-        Return True
-    End Function
-    <WebMethod()> _
-    Public Function ConsultarDocumentos(ByVal condicion As String, ByVal tabla As String) As Documento 'FUNCIÓN PARA CONSULTAR LA INFORMACIÓN DE UN DOCUMENTO.'
-        Try
-            Dim clase As New Configuracion 'CREACION DE UNA VARIABLE DE LA CLASE Configuración'
-            Dim documentoConsulta As New Documento 'CREACION DE VARIBLE DE LA CLASE Documento.'
-            Dim campos() As String = clase.LecturaConfiguracionDocumento() 'SE LEEN LOS NOMBRES DE LOS CAMPOS ALMACENADOS EN EL ARCHIVO DE CONFIGURACIÓN.'
-            conexion.Conectar() 'SE ABRE LA CONEXIÓN CON LA BASE DE DATOS.'
-            Select Case motorDB
-                Case "1" ' 1 PARA CONEXIONES DE TIPO SQL.'
-                    conexion.ConsultarDocumentoSQL(campos, condicion, tabla, documentoConsulta)
-                Case "2" ' 2 PARA CONEXIONES DE TIPO DBF.'
-                    conexion.ConsultarDocumento(campos, condicion, tabla, documentoConsulta)
-            End Select
-            conexion.CerrarConexion() 'CIERRE DE LA CONEXION.'
-            Return documentoConsulta 'DEVULVE LA CONSULTA REALIZADA A LA BASE DATOS.'
-        Catch ex As Exception
-            MsgBox("Problema encontrado: " & ex.Message) 'MENSAJE DE ERROR DE TIPO VENTANA DE WINDOWS
-            conexion.CerrarConexion() 'EN CASO DE FALLAR SE CIERRA LA CONEXIÓN ABIERTA PREVIAMENTE.'
-        End Try
+    ' <WebMethod()> _
+    ' Public Function TipoConexion(ByVal Tipo As String) As Boolean 'FUNCIÓN PARA SELECCIONAR EL TIPO DE CONEXIÓN.'
+    '    Select Case Tipo
+    '       Case "1" ' 1 PARA CONEXIÓN DE TIPO SQL.' 
+    '          motorDB = Tipo 'SQL'
+    '     Case "2" ' 2 PARA CONEXIÓN DE TIPO DBF.'
+    '        motorDB = Tipo 'DBF'
+    'End Select
+    'Return True
+    'End Function
 
-    End Function
+    ' <WebMethod()> _
+    'Public Function ConsultarDocumentos(ByVal condicion As String, ByVal tabla As String) As Documento 'FUNCIÓN PARA CONSULTAR LA INFORMACIÓN DE UN DOCUMENTO.'
+    '   Try
+    'Dim clase As New Configuracion 'CREACION DE UNA VARIABLE DE LA CLASE Configuración'
+    'Dim documentoConsulta As New Documento 'CREACION DE VARIBLE DE LA CLASE Documento.'
+    'Dim campos() As String = clase.LecturaConfiguracionDocumento() 'SE LEEN LOS NOMBRES DE LOS CAMPOS ALMACENADOS EN EL ARCHIVO DE CONFIGURACIÓN.'
+    '       conexion.Conectar() 'SE ABRE LA CONEXIÓN CON LA BASE DE DATOS.'
+    '      Select Case motorDB
+    '         Case "1" ' 1 PARA CONEXIONES DE TIPO SQL.'
+    '            conexion.ConsultarDocumentoSQL(campos, condicion, tabla, documentoConsulta)
+    '       Case "2" ' 2 PARA CONEXIONES DE TIPO DBF.'
+    '          conexion.ConsultarDocumento(campos, condicion, tabla, documentoConsulta)
+    ' End Select
+    'conexion.CerrarConexion() 'CIERRE DE LA CONEXION.'
+    'Return documentoConsulta 'DEVULVE LA CONSULTA REALIZADA A LA BASE DATOS.'
+    'Catch ex As Exception
+    '    MsgBox("Problema encontrado: " & ex.Message) 'MENSAJE DE ERROR DE TIPO VENTANA DE WINDOWS
+    '    conexion.CerrarConexion() 'EN CASO DE FALLAR SE CIERRA LA CONEXIÓN ABIERTA PREVIAMENTE.'
+    'End Try
+
+    'End Function
     <WebMethod()> _
     Public Function ConsultaDocumentosInterna(ByVal condicion As String, ByVal tabla As String) As Documento
         Dim documentoConsulta As New Documento 'CREACION DE VARIBLE DE LA CLASE Documento.'
@@ -164,6 +165,8 @@ Public Class WebService1
     End Function
     <WebMethod()> _
     Public Function Configuracion_Socket(DireccionEmpresa As String, aRutaXML As String, aCodConcepto As String, aUUID As String, aRutaDDA As String, aPass As String, aRutaFormato As String) As Boolean
+        'FUNCIÓN QUE GUARDA DATOS EN LA BASE DE DATOS PARA LA CREACIÓN DEL ARCHIVO XML.
+        'LOS DATOS SE GUARDAN EN SQL, LA BASE Y LA TABLA SON ESTATICAS HASTA EL MOMENTO 30/01/2018
         Try
             conexion.InsertarConfiguracionSocket(DireccionEmpresa, aRutaXML, aCodConcepto, aUUID, aRutaDDA, aPass, aRutaFormato)
             Return True
