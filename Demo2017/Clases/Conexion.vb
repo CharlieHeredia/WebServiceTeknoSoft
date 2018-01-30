@@ -90,6 +90,11 @@ Public Class Conexion
             ConexionesSQL.Close() 'CIERRE DE LA CONEXIÓN.'
         End Try
     End Function
+    Public Function GenerarArchivo(ByVal Folio As String)
+        Dim adaptador As New SqlDataAdapter 'ADAPTADOR PARA RECIBIR LA CONSULTA A LA BASE DE DATOS.'
+        Dim ds As New DataSet 'DATASET UTILIZADO PARA PASAR LA INFORMACIÓN DEL ADAPTADOR A ESTÉ.'
+
+    End Function
     Public Function ConsultarDocumento(ByVal campos As String(), ByVal condicion As String, ByVal tabla As String, ByRef datos As Documento) As Boolean
         ConsultarDocumento = False
         Try

@@ -19,4 +19,21 @@ Module Funciones_Globales
             conexion.CerrarConexion() 'EN CASO DE FALLAR SE CIERRA LA CONEXIÓN ABIERTA PREVIAMENTE.'
         End Try
     End Function
+
+    Public Function GenerarArchivo(ByVal Folio As String)
+        Try
+            conexion.Conectar() 'SE ABRE LA CONEXIÓN CON LA BASE DE DATOS.'
+
+            conexion.CerrarConexion() 'CIERRA LA CONEXIÓN.'
+        Catch ex As Exception
+            MsgBox("Error interno: " & ex.Message)
+        End Try
+    End Function
+
+    Public Function VerificacionExistenciaDirectorioPrincipal()
+        'FUNCIÓN PARA CREAR EL DIRECTORIO PRINCIPAL DONDE TRABAJA EL WEBSERVICE.'
+        If Directory.Exists("C:\TeknoCom") = False Then 'VERIFICACIÓN DE EXISTENCIA DE DIRECTORIO. EN CASO DE NO EXISTIR ENTRA A LA CONDICIÓN'
+            Directory.CreateDirectory("C:\TeknoCom") 'SE CREAA EL DIRECTORIO.'
+        End If
+    End Function
 End Module

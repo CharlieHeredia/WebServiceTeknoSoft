@@ -77,6 +77,16 @@ Public Class WebService1
 
     'End Function
     <WebMethod()> _
+    Public Function GenerarArchivoDatosPrueba(ByVal Folio As String) As Boolean
+        Try
+            GenerarArchivo(Folio)
+            Return True
+        Catch ex As Exception
+            MsgBox("Error encontrado: " & ex.Message)
+            Return False
+        End Try
+    End Function
+    <WebMethod()> _
     Public Function ConsultaDocumentosInterna(ByVal condicion As String, ByVal tabla As String) As Documento
         Dim documentoConsulta As New Documento 'CREACION DE VARIBLE DE LA CLASE Documento.'
         documentoConsulta = ConsultarDocumentoSQL(condicion, tabla)
@@ -85,9 +95,7 @@ Public Class WebService1
     <WebMethod()> _
     Public Function ConfigurarDocumento(ByVal idDocumento As String, ByVal aFolio As String, ByVal aNumMoneda As String, ByVal aTipoCambio As String, ByVal aImporte As String, ByVal aDescuentoDoc1 As String, ByVal aDescuentoDoc2 As String, ByVal aSistemasOrigen As String, ByVal aCodConcepto As String, ByVal aSerie As String, ByVal aFecha As String, ByVal aCodigoCteProv As String, ByVal aCodigoAgente As String, ByVal aReferencia As String, ByVal aAfecta As String, ByVal aGasto1 As String, ByVal aGasto2 As String, ByVal aGasto3 As String, ByVal NombreTabla As String, ByVal aRazonSocial As String) As Boolean
         Try
-            If Directory.Exists("C:\TeknoCom") = False Then 'VERIFICACIÓN DE EXISTENCIA DE DIRECTORIO. EN CASO DE NO EXISTIR ENTRA A LA CONDICIÓN'
-                Directory.CreateDirectory("C:\TeknoCom") 'SE CREAA EL DIRECTORIO.'
-            End If
+            VerificacionExistenciaDirectorioPrincipal()
             Dim Path = File.Create("C:\TeknoCom\ConfiguracionDocumento.txt") 'SE CREA EL ARCHIVO TXT DONDE SE ALMACENA LA CONFIGURACIÓN DEL DOCUMENTO.'
             Path.Close()
             Dim createText() As String = {idDocumento.Trim() & "|" & aFolio.Trim() & "|" & aNumMoneda.Trim() & "|" & aTipoCambio.Trim() & "|" & aImporte.Trim() & "|" & aDescuentoDoc1.Trim() & "|" & aDescuentoDoc2.Trim() & "|" & aSistemasOrigen.Trim() & "|" & aCodConcepto.Trim() & "|" & aSerie.Trim() & "|" & aFecha.Trim() & "|" & aCodigoCteProv.Trim() & "|" & aCodigoAgente.Trim() & "|" & aReferencia.Trim() & "|" & aAfecta.Trim() & "|" & aGasto1.Trim() & "|" & aGasto2.Trim() & "|" & aGasto3.Trim() & "|" & aRazonSocial.Trim()}
@@ -105,9 +113,7 @@ Public Class WebService1
     <WebMethod()> _
     Public Function ConfigurarProducto(ByVal cantidad As String, ByVal unidad As String, ByVal num_identificacion As String, ByVal valorUnitario As String, ByVal importe As String, ByVal claveProductoSer As String, ByVal claveunidad As String, ByVal descripcion As String, ByVal numeroPedimentoAduana As String, ByVal totalImpuesto As String, ByVal baseTrasladoImpuesto As String, ByVal impuestoTrasladoImpuesto As String, ByVal tipofactorTrasladoImpuesto As String, ByVal tasacuotaTrasladoImpuesto As String, ByVal importeTrasladoImpuesto As String) As Boolean
         Try
-            If Directory.Exists("C:\TeknoCom") = False Then 'VERIFICACIÓN DE EXISTENCIA DE DIRECTORIO. EN CASO DE NO EXISTIR ENTRA A LA CONDICIÓN'
-                Directory.CreateDirectory("C:\TeknoCom") 'SE CREAA EL DIRECTORIO.'
-            End If
+            VerificacionExistenciaDirectorioPrincipal()
             Dim Path = File.Create("C:\TeknoCom\ConfiguracionMovimiento.txt") 'SE CREA EL ARCHIVO TXT DONDE SE ALMACENA LA CONFIGURACIÓN DEL MOVIMIENTO.'
             Path.Close()
             Dim createText() As String = {cantidad.Trim() & "|" & unidad.Trim() & "|" & num_identificacion.Trim() & "|" & valorUnitario.Trim() & "|" & importe.Trim() & "|" & claveProductoSer.Trim() & "|" & claveunidad.Trim() & "|" & descripcion.Trim() & "|" & numeroPedimentoAduana.Trim() & "|" & totalImpuesto.Trim() & "|" & baseTrasladoImpuesto.Trim() & "|" & importeTrasladoImpuesto.Trim() & "|" & tipofactorTrasladoImpuesto.Trim() & "|" & tasacuotaTrasladoImpuesto.Trim() & "|" & importeTrasladoImpuesto.Trim()}
