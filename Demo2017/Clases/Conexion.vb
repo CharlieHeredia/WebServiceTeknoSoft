@@ -106,16 +106,19 @@ Public Class Conexion
         MsgBox("Texto recogido: " & renglon)
         'INFORMACIÓN DEL EMISOR.'
         Dim ConexionSQLTemporal As New SqlConnection()
+        ds = New DataSet
         ConexionSQLTemporal.ConnectionString = "Data Source=" & hostname & ";Initial Catalog=CompacWAdmin ;User Id=" & usuarioBD & ";Password=" & contra 'INFORMACIÓN DE LA CONEXIÓN.'
         ConexionSQLTemporal.Open()
-        cmd = New SqlCommand("SELECT CIDEMPRESA from Empresas where CRUTADATOS = " & "C:\Compac\Empresas\" + BaseDatos, ConexionSQLTemporal)
-        adaptador = New SqlDataAdapter()
+        Dim Direccion As String = "C:\Compac\Empresas\" & BaseDatos.Trim()
+        MsgBox("Direccion: " & Direccion)
+        cmd = New SqlCommand("SELECT CIDEMPRESA from Empresas where CRUTADATOS ='" & Direccion.Trim() & "'", ConexionSQLTemporal)
         adaptador.SelectCommand = cmd
         adaptador.Fill(ds)
         renglon = ""
         For Each row As DataRow In ds.Tables(0).Rows
             renglon = row(0)
         Next
+        ConexionSQLTemporal.Close()
         MsgBox("Texto: " & renglon)
     End Function
     Public Function ConsultarDocumento(ByVal campos As String(), ByVal condicion As String, ByVal tabla As String, ByRef datos As Documento) As Boolean

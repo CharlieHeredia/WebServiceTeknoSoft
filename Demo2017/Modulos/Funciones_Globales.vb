@@ -26,7 +26,7 @@ Module Funciones_Globales
             conexion.GenerarArchivo(Folio)
             conexion.CerrarConexion() 'CIERRA LA CONEXIÓN.'
         Catch ex As Exception
-            MsgBox("Error interno: " & ex.Message)
+            MsgBox("Error interno: " & ex.ToString())
         End Try
     End Function
 
