@@ -37,6 +37,14 @@ Public Class WebService1
             GenerarArchivoDatosConexion = False 'DEVUELVE False INDICADNO QUE LOS DATOS NO SE GUARDARON CORRECTAMENTE
         End Try
     End Function
+    <WebMethod()> _
+    Public Function EliminarArchivoDatosConexion() As Boolean
+        Try
+            EliminarArchivoDatosConexion = EliminarArchivoDatosConexionWebService()
+        Catch ex As Exception
+            EliminarArchivoDatosConexion = False
+        End Try
+    End Function
     ' <WebMethod()> _
     ' Public Function TipoConexion(ByVal Tipo As String) As Boolean 'FUNCIÓN PARA SELECCIONAR EL TIPO DE CONEXIÓN.'
     '    Select Case Tipo

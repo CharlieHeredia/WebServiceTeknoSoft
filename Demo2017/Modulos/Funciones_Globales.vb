@@ -1,4 +1,6 @@
 ﻿Imports System.IO
+Imports System.Security.Cryptography
+Imports System.Text
 Module Funciones_Globales
     Dim conexion As New Conexion
     Public Function ConsultaProductoSQL()
@@ -55,10 +57,20 @@ Module Funciones_Globales
             Path.Close()
             Dim texto() As String = {host, BD, user, pass}
             File.WriteAllLines("C:\TeknoCom\WebService\ConfiguracionConexion.txt", texto)
+            'File.Encrypt("C:\TeknoCom\WebService\ConfiguracionConexion.txt")
             ArchivoConfiguracionWebService = True
             Return True
         Else
             Return False
+        End If
+    End Function
+    Public Function EliminarArchivoDatosConexionWebService() As Boolean
+        If File.Exists("C:\TeknoCom\WebService\ConfiguracionConexion.txt") = False Then
+            Return False
+        Else
+            'File.Delete("C:\TeknoCom\WebService\ConfiguracionConexion.txt")
+            My.Computer.FileSystem.DeleteFile("C:\TeknoCom\WebService\ConfiguracionConexion.txt", Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.DeletePermanently) 'BORRA PERMANENTEMENTE EL ARCHIVO DE CONFIGURACIÓN.'
+            Return True
         End If
     End Function
 End Module
