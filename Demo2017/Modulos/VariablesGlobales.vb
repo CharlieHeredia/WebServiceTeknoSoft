@@ -8,4 +8,6 @@
     Public PuertoServidor As Integer = 64555 'PUERTO DEL SOCKET SERVIDOR.'
 
     Public ArchivoConfiguracionWebService As Boolean = False
+    Public DireccionArchivoConfiguracionWebService As String = "C:\TeknoCom\WebService\ConfiguracionConexion.txt"
+    Public Key As String = "teknocom"
 End Module

@@ -194,4 +194,8 @@ Public Class WebService1
         pro._impuesto = imp
         Return pro
     End Function
+    <WebMethod()> _
+    Public Function Tacos()
+        CargarArchivoConfiguracionWebService()
+    End Function
 End Class

@@ -45,31 +45,67 @@ Module Funciones_Globales
             Directory.CreateDirectory("C:\TeknoCom\WebService")
         End If
     End Function
+    Public Function CargarArchivoConfiguracionWebService() As Boolean
+        'FUNCIÓN PARA VERIFICAR SI EXISTE EL ARCHIVO DE CONFIGURACIÓN. EN CASO DE EXISTIR SE CARGA LA CONFIGURACIÓN.'
+        If ArchivoConfiguracionWebService = False Then
+            'NO SE HA CARGADO LA INFORMACIÓN O NO EXISTE EL ARCHIVO DE CONFIGURACIÓN.'
+            If File.Exists(DireccionArchivoConfiguracionWebService) = True Then
+                'EXISTE EL ARCHIVO DE CONFIGURACIÓN, SE CARGARÁN LOS DATOS.'
+                MsgBox("entrooooo")
+                DecryptFile(DireccionArchivoConfiguracionWebService, Key) 'DESENCRIPTACIÓN DEL ARCHIVO.'
+                Dim apuntadorArchivo As New StreamReader(DireccionArchivoConfiguracionWebService, System.Text.Encoding.Default, False) 'APUNTADOR AL ARCHIVO.'
+                Dim lineaTexto As String = "" 'VARIABLE PARA ALMACENAR LA LINEA DE TEXTO QUE SE LEA DEL ARCHIVO.'
+                Dim NumeroLinea As Integer = 1
+                Do While Not apuntadorArchivo.EndOfStream
+                    lineaTexto = apuntadorArchivo.ReadLine
+                    Select Case NumeroLinea
+                        Case 1
+                            hostname = lineaTexto
+                        Case 2
+                            BaseDatos = lineaTexto
+                        Case 3
+                            usuarioBD = lineaTexto
+                        Case 4
+                            contra = lineaTexto
+                        Case Else
+                            'NO HACE NADA.'
+                    End Select
+                    NumeroLinea += 1
+                    MsgBox("Linea texto: " & lineaTexto)
+                Loop
+                ArchivoConfiguracionWebService = True
+                EncryptFile(DireccionArchivoConfiguracionWebService, Key)
+            End If
+        Else
+            'YA EXISTE EL ARCHIVO DE CONFIGURACIÓN.'
+        End If
+    End Function
 
     Public Function GenerarArchivoDatosConexionWebService(ByVal host As String, ByVal BD As String, ByVal user As String, ByVal pass As String) As Boolean
         VerificacionExistenciaDirectorioConfiguracionWebService()
-        If File.Exists("C:\TeknoCom\WebService\ConfiguracionConexion.txt") = False Then
+        If File.Exists(DireccionArchivoConfiguracionWebService) = False Then
             hostname = host 'NOMBRE DE HOST O INSTANCIA'
             BaseDatos = BD 'NOMBRE DE LA BASE DE DATOS'
             usuarioBD = user 'NOMBRE DE USUARIO DE LA BASE DE DATOS'
             contra = pass 'CONTRASEÑA DE LA BASE DE DATOS'
-            Dim Path = File.Create("C:\TeknoCom\WebService\ConfiguracionConexion.txt")
+            Dim Path = File.Create(DireccionArchivoConfiguracionWebService)
             Path.Close()
             Dim texto() As String = {host, BD, user, pass}
-            File.WriteAllLines("C:\TeknoCom\WebService\ConfiguracionConexion.txt", texto)
+            File.WriteAllLines(DireccionArchivoConfiguracionWebService, texto)
             'File.Encrypt("C:\TeknoCom\WebService\ConfiguracionConexion.txt")
             ArchivoConfiguracionWebService = True
+            EncryptFile(DireccionArchivoConfiguracionWebService, Key)
             Return True
         Else
             Return False
         End If
     End Function
     Public Function EliminarArchivoDatosConexionWebService() As Boolean
-        If File.Exists("C:\TeknoCom\WebService\ConfiguracionConexion.txt") = False Then
+        If File.Exists(DireccionArchivoConfiguracionWebService) = False Then
             Return False
         Else
             'File.Delete("C:\TeknoCom\WebService\ConfiguracionConexion.txt")
-            My.Computer.FileSystem.DeleteFile("C:\TeknoCom\WebService\ConfiguracionConexion.txt", Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.DeletePermanently) 'BORRA PERMANENTEMENTE EL ARCHIVO DE CONFIGURACIÓN.'
+            My.Computer.FileSystem.DeleteFile(DireccionArchivoConfiguracionWebService, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.DeletePermanently) 'BORRA PERMANENTEMENTE EL ARCHIVO DE CONFIGURACIÓN.'
             Return True
         End If
     End Function
