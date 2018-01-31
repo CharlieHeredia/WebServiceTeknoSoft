@@ -23,7 +23,7 @@ Module Funciones_Globales
     Public Function GenerarArchivo(ByVal Folio As String)
         Try
             conexion.Conectar() 'SE ABRE LA CONEXIÓN CON LA BASE DE DATOS.'
-
+            conexion.GenerarArchivo(Folio)
             conexion.CerrarConexion() 'CIERRA LA CONEXIÓN.'
         Catch ex As Exception
             MsgBox("Error interno: " & ex.Message)

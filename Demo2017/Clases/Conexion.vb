@@ -93,7 +93,30 @@ Public Class Conexion
     Public Function GenerarArchivo(ByVal Folio As String)
         Dim adaptador As New SqlDataAdapter 'ADAPTADOR PARA RECIBIR LA CONSULTA A LA BASE DE DATOS.'
         Dim ds As New DataSet 'DATASET UTILIZADO PARA PASAR LA INFORMACIÓN DEL ADAPTADOR A ESTÉ.'
-
+        VerificacionExistenciaDirectorioPrincipal()
+        'INFORMACIÓN DEL RECEPTOR.'
+        Dim cmd As New SqlCommand("SELECT admClientes.CRFC,admClientes.CRAZONSOCIAL,CUSOCFDI from admDocumentos INNER JOIN admClientes on admClientes.CIDCLIENTEPROVEEDOR = admDocumentos.CIDCLIENTEPROVEEDOR WHERE CFOLIO = " & Folio, ConexionesSQL)
+        adaptador.SelectCommand = cmd 'EJECUCION DEL COMANDO SQL.'
+        '<---------------------- TERMINA CONSULTA SQL --------------------------------->'
+        adaptador.Fill(ds)
+        Dim renglon As String = ""
+        For Each row As DataRow In ds.Tables(0).Rows
+            renglon = row(0) + "|" + row(1) + "|" + row(2) + "¬"
+        Next
+        MsgBox("Texto recogido: " & renglon)
+        'INFORMACIÓN DEL EMISOR.'
+        Dim ConexionSQLTemporal As New SqlConnection()
+        ConexionSQLTemporal.ConnectionString = "Data Source=" & hostname & ";Initial Catalog=CompacWAdmin ;User Id=" & usuarioBD & ";Password=" & contra 'INFORMACIÓN DE LA CONEXIÓN.'
+        ConexionSQLTemporal.Open()
+        cmd = New SqlCommand("SELECT CIDEMPRESA from Empresas where CRUTADATOS = " & "C:\Compac\Empresas\" + BaseDatos, ConexionSQLTemporal)
+        adaptador = New SqlDataAdapter()
+        adaptador.SelectCommand = cmd
+        adaptador.Fill(ds)
+        renglon = ""
+        For Each row As DataRow In ds.Tables(0).Rows
+            renglon = row(0)
+        Next
+        MsgBox("Texto: " & renglon)
     End Function
     Public Function ConsultarDocumento(ByVal campos As String(), ByVal condicion As String, ByVal tabla As String, ByRef datos As Documento) As Boolean
         ConsultarDocumento = False
