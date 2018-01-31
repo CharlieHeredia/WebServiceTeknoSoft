@@ -28,21 +28,14 @@ Public Class WebService1
         Return ProbarConexion ' SE REGRESA EL RESULTADO DE LA PRUEBA DE CONEXIÓN.'
     End Function
     <WebMethod()> _
-    Public Function ConsultaProducto()
-
-    End Function
-    <WebMethod()> _
-    Public Function DatosConexion(ByVal host As String, ByVal BD As String, ByVal user As String, ByVal pass As String) As Boolean
+    Public Function GenerarArchivoDatosConexion(ByVal host As String, ByVal BD As String, ByVal user As String, ByVal pass As String) As Boolean
         Try
-            hostname = host 'NOMBRE DE HOST O INSTANCIA'
-            BaseDatos = BD 'NOMBRE DE LA BASE DE DATOS'
-            usuarioBD = user 'NOMBRE DE USUARIO DE LA BASE DE DATOS'
-            contra = pass 'CONTRASEÑA DE LA BASE DE DATOS'
-            DatosConexion = True 'DEVUELVE True INDICANDO QUE LOS DATOS SE GUARDARON CORRECTAMENTE.'
+            GenerarArchivoDatosConexion = GenerarArchivoDatosConexionWebService(host, BD, user, pass)
+            'DEVUELVE True INDICANDO QUE LOS DATOS SE GUARDARON CORRECTAMENTE.'
+            'DEVUELVE False INDICANDO QUE EL ARCHIVO DE CONFIGURACIÓN YA EXISTE.'
         Catch ex As Exception
-            DatosConexion = False 'DEVUELVE False INDICADNO QUE LOS DATOS NO SE GUARDARON CORRECTAMENTE.
+            GenerarArchivoDatosConexion = False 'DEVUELVE False INDICADNO QUE LOS DATOS NO SE GUARDARON CORRECTAMENTE
         End Try
-        Return DatosConexion
     End Function
     ' <WebMethod()> _
     ' Public Function TipoConexion(ByVal Tipo As String) As Boolean 'FUNCIÓN PARA SELECCIONAR EL TIPO DE CONEXIÓN.'

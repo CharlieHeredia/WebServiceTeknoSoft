@@ -6,4 +6,6 @@
     Public contra As String 'CONTRASEÑA DE LA BASE DE DATOS.'
     Public DireccionIPServidor As String = "127.0.0.1" 'DIRECCIÓN DEL SOCKET SERVIDOR, POR DEFECTO SE COLOCA 127.0.0.1, ESTA DEBE CAMBIARSE.'
     Public PuertoServidor As Integer = 64555 'PUERTO DEL SOCKET SERVIDOR.'
+
+    Public ArchivoConfiguracionWebService As Boolean = False
 End Module

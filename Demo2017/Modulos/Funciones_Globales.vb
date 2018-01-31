@@ -36,4 +36,29 @@ Module Funciones_Globales
             Directory.CreateDirectory("C:\TeknoCom") 'SE CREAA EL DIRECTORIO.'
         End If
     End Function
+
+    Public Function VerificacionExistenciaDirectorioConfiguracionWebService()
+        'FUNCIÓN PARA CREAR EL DIRECTORIO DONDE SE ALMACENAN LOS ARCHIVOS DE CONFIGURACIÓN DEL WEB SERVICE.'
+        If Directory.Exists("C:\TeknoCom\WebService") = False Then
+            Directory.CreateDirectory("C:\TeknoCom\WebService")
+        End If
+    End Function
+
+    Public Function GenerarArchivoDatosConexionWebService(ByVal host As String, ByVal BD As String, ByVal user As String, ByVal pass As String) As Boolean
+        VerificacionExistenciaDirectorioConfiguracionWebService()
+        If File.Exists("C:\TeknoCom\WebService\ConfiguracionConexion.txt") = False Then
+            hostname = host 'NOMBRE DE HOST O INSTANCIA'
+            BaseDatos = BD 'NOMBRE DE LA BASE DE DATOS'
+            usuarioBD = user 'NOMBRE DE USUARIO DE LA BASE DE DATOS'
+            contra = pass 'CONTRASEÑA DE LA BASE DE DATOS'
+            Dim Path = File.Create("C:\TeknoCom\WebService\ConfiguracionConexion.txt")
+            Path.Close()
+            Dim texto() As String = {host, BD, user, pass}
+            File.WriteAllLines("C:\TeknoCom\WebService\ConfiguracionConexion.txt", texto)
+            ArchivoConfiguracionWebService = True
+            Return True
+        Else
+            Return False
+        End If
+    End Function
 End Module
