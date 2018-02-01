@@ -198,4 +198,13 @@ Public Class WebService1
     Public Function Tacos()
         CargarArchivoConfiguracionWebService()
     End Function
+
+    <WebMethod()> _
+    Public Function Encriptar()
+        EncryptFile("C:\TeknoCom\WebService\Tacos.txt", Key)
+    End Function
+    <WebMethod()> _
+    Public Function Desencritar()
+        DecryptFile("C:\TeknoCom\WebService\Tacos.txt", Key)
+    End Function
 End Class
