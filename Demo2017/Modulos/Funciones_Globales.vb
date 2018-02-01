@@ -51,7 +51,6 @@ Module Funciones_Globales
             'NO SE HA CARGADO LA INFORMACIÓN O NO EXISTE EL ARCHIVO DE CONFIGURACIÓN.'
             If File.Exists(DireccionArchivoConfiguracionWebService) = True Then
                 'EXISTE EL ARCHIVO DE CONFIGURACIÓN, SE CARGARÁN LOS DATOS.'
-                MsgBox("entrooooo")
                 DecryptFile(DireccionArchivoConfiguracionWebService, Key) 'DESENCRIPTACIÓN DEL ARCHIVO.'
                 Dim apuntadorArchivo As New StreamReader(DireccionArchivoConfiguracionWebService, System.Text.Encoding.Default, False) 'APUNTADOR AL ARCHIVO.'
                 Dim lineaTexto As String = "" 'VARIABLE PARA ALMACENAR LA LINEA DE TEXTO QUE SE LEA DEL ARCHIVO.'
@@ -71,7 +70,6 @@ Module Funciones_Globales
                             'NO HACE NADA.'
                     End Select
                     NumeroLinea += 1
-                    MsgBox("Linea texto: " & lineaTexto)
                 Loop
                 ArchivoConfiguracionWebService = True
                 apuntadorArchivo.Dispose()
@@ -111,7 +109,7 @@ Module Funciones_Globales
         End If
     End Function
 
-    Public Function EncryptFile(ByVal filepath As String, ByVal key As String)
+    Private Function EncryptFile(ByVal filepath As String, ByVal key As String)
         Dim plainContent As Byte() = File.ReadAllBytes(filepath)
         Dim DES As New DESCryptoServiceProvider()
         Using (DES)
@@ -132,7 +130,7 @@ Module Funciones_Globales
         End Using
 
     End Function
-    Public Function DecryptFile(ByVal filepath As String, ByVal key As String)
+    Private Function DecryptFile(ByVal filepath As String, ByVal key As String)
         Dim encrypted As Byte() = File.ReadAllBytes(filepath)
         Dim DES As New DESCryptoServiceProvider()
         Using (DES)
