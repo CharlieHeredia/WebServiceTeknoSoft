@@ -8,6 +8,7 @@ Public Class Conexion
     Public empresa As String 'VARIABLE PARA ALMACENAR EL NOMBRE DE LA EMPRESA.'
 
     Public Function Conectar() 'FUNCIÓN PARA ABRIR CONEXIÓN A LA BASE DE DATOS SQL Y DBF'
+        CargarArchivoConfiguracionWebService()
         ' RutaEmpresa = rutaempresaq
         Select Case motorDB
             Case "1" 'CONEXIÓN DE TIPO SQL'
@@ -110,7 +111,7 @@ Public Class Conexion
         ConexionSQLTemporal.ConnectionString = "Data Source=" & hostname & ";Initial Catalog=CompacWAdmin ;User Id=" & usuarioBD & ";Password=" & contra 'INFORMACIÓN DE LA CONEXIÓN.'
         ConexionSQLTemporal.Open()
         Dim Direccion As String = "C:\Compac\Empresas\" & BaseDatos.Trim()
-        MsgBox("Direccion: " & Direccion)
+        'MsgBox("Direccion: " & Direccion)
         cmd = New SqlCommand("SELECT CIDEMPRESA from Empresas where CRUTADATOS ='" & Direccion.Trim() & "'", ConexionSQLTemporal)
         adaptador.SelectCommand = cmd
         adaptador.Fill(ds)
@@ -118,7 +119,16 @@ Public Class Conexion
         For Each row As DataRow In ds.Tables(0).Rows
             renglon = row(0)
         Next
+        MsgBox("Texto: " & renglon)
         ConexionSQLTemporal.Close()
+        ds = New DataSet
+        cmd = New SqlCommand("SELECT CNOMBREEMPRESA,CRFCEMPRESA,CREGIMFISC,CIMPUESTO1,CIMPUESTO2,CIMPUESTO3,CNOMBREIMPUESTO1,CNOMBREIMPUESTO2,CNOMBREIMPUESTO3 from admParametros where CIDEMPRESA = " & renglon, ConexionesSQL)
+        adaptador.SelectCommand = cmd
+        adaptador.Fill(ds)
+        renglon = ""
+        For Each row As DataRow In ds.Tables(0).Rows
+            renglon = row(0) + "|" + row(1) + "|" + row(2) + "|" + row(3).ToString() + "|" + row(4).ToString() + "|" + row(5).ToString() + "|" + row(6) + "|" + row(7) + "|" + row(8) + "¬"
+        Next
         MsgBox("Texto: " & renglon)
     End Function
     Public Function ConsultarDocumento(ByVal campos As String(), ByVal condicion As String, ByVal tabla As String, ByRef datos As Documento) As Boolean
