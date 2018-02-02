@@ -8,7 +8,7 @@ Public Class Conexion
     Public empresa As String 'VARIABLE PARA ALMACENAR EL NOMBRE DE LA EMPRESA.'
 
     Public Function Conectar() 'FUNCIÓN PARA ABRIR CONEXIÓN A LA BASE DE DATOS SQL Y DBF'
-        CargarArchivoConfiguracionWebService()
+        CargarArchivoConfiguracionWebService() 'CARGAR LOS DATOS DEL ARCHIVO DE CONFIGURACIÓN.' 
         ' RutaEmpresa = rutaempresaq
         Select Case motorDB
             Case "1" 'CONEXIÓN DE TIPO SQL'
@@ -91,21 +91,21 @@ Public Class Conexion
             ConexionesSQL.Close() 'CIERRE DE LA CONEXIÓN.'
         End Try
     End Function
-    Public Function GenerarArchivo(ByVal Folio As String)
+    Public Function GenerarArchivo(ByVal Folio As String, ByVal iddocu As String)
         Dim adaptador As New SqlDataAdapter 'ADAPTADOR PARA RECIBIR LA CONSULTA A LA BASE DE DATOS.'
         Dim ds As New DataSet 'DATASET UTILIZADO PARA PASAR LA INFORMACIÓN DEL ADAPTADOR A ESTÉ.'
         VerificacionExistenciaDirectorioPrincipal()
-        'INFORMACIÓN DEL RECEPTOR.'
+        '<-------------------------------------- INFORMACIÓN DEL RECEPTOR.'
         Dim cmd As New SqlCommand("SELECT admClientes.CRFC,admClientes.CRAZONSOCIAL,CUSOCFDI from admDocumentos INNER JOIN admClientes on admClientes.CIDCLIENTEPROVEEDOR = admDocumentos.CIDCLIENTEPROVEEDOR WHERE CFOLIO = " & Folio, ConexionesSQL)
         adaptador.SelectCommand = cmd 'EJECUCION DEL COMANDO SQL.'
         '<---------------------- TERMINA CONSULTA SQL --------------------------------->'
         adaptador.Fill(ds)
         Dim renglon As String = ""
         For Each row As DataRow In ds.Tables(0).Rows
-            renglon = row(0) + "|" + row(1) + "|" + row(2) + "¬"
+            renglon = row(0).ToString() + "|" + row(1).ToString() + "|" + row(2).ToString() + "¬"
         Next
         MsgBox("Texto recogido: " & renglon)
-        'INFORMACIÓN DEL EMISOR.'
+        '<---------------------------------------- INFORMACIÓN DEL EMISOR.'
         Dim ConexionSQLTemporal As New SqlConnection()
         ds = New DataSet
         ConexionSQLTemporal.ConnectionString = "Data Source=" & hostname & ";Initial Catalog=CompacWAdmin ;User Id=" & usuarioBD & ";Password=" & contra 'INFORMACIÓN DE LA CONEXIÓN.'
@@ -117,7 +117,7 @@ Public Class Conexion
         adaptador.Fill(ds)
         renglon = ""
         For Each row As DataRow In ds.Tables(0).Rows
-            renglon = row(0)
+            renglon = row(0).ToString()
         Next
         MsgBox("Texto: " & renglon)
         ConexionSQLTemporal.Close()
@@ -127,9 +127,22 @@ Public Class Conexion
         adaptador.Fill(ds)
         renglon = ""
         For Each row As DataRow In ds.Tables(0).Rows
-            renglon = row(0) + "|" + row(1) + "|" + row(2) + "|" + row(3).ToString() + "|" + row(4).ToString() + "|" + row(5).ToString() + "|" + row(6) + "|" + row(7) + "|" + row(8) + "¬"
+            renglon = row(0).ToString() + "|" + row(1).ToString() + "|" + row(2).ToString() + "|" + row(3).ToString() + "|" + row(4).ToString() + "|" + row(5).ToString() + "|" + row(6).ToString() + "|" + row(7).ToString() + "|" + row(8).ToString() + "¬"
         Next
         MsgBox("Texto: " & renglon)
+        '<--------------------------------------------------------- INFORMACIÓN DE CONCEPTO'
+        ds = New DataSet
+        cmd = New SqlCommand("SELECT admProductos.CCLAVESAT,CCLAVEINT,CNOMBREUNIDAD,CUNIDADES,CCODIGOPRODUCTO,CNOMBREPRODUCTO,CPRECIO,CNETO FROM admMovimientos INNER JOIN admProductos on admProductos.CIDPRODUCTO = admMovimientos.CIDPRODUCTO INNER JOIN admUnidadesMedidaPeso on admUnidadesMedidaPeso.CIDUNIDAD = admMovimientos.CIDUNIDAD WHERE CIDDOCUMENTO =" & iddocu, ConexionesSQL)
+        adaptador.SelectCommand = cmd
+        adaptador.Fill(ds)
+        renglon = ""
+        For Each row As DataRow In ds.Tables(0).Rows
+            renglon = row(0).ToString() + "|" + row(1).ToString() + "|" + row(2).ToString() + "|" + row(3).ToString() + "|" + row(4).ToString() + "|" + row(5).ToString() + "|" + row(6).ToString() + "|" + row(7).ToString() + "¬"
+        Next
+        MsgBox("Texto: " & renglon)
+        '<------------------------------------------------------------- INFORMACIÓN DE COMPROBANTE'
+        ds = New DataSet
+        cmd = New SqlCommand("SELECT CSERIEDOCUMENTO,CFOLIO,admDocumentos.CTIMESTAMP,CMETODOPAG,CLUGAREXPE,admMonedas.CCLAVESAT from admDocumentos INNER JOIN admMonedas on admMonedas.CIDMONEDA = admDocumentos.CIDMONEDA;")
     End Function
     Public Function ConsultarDocumento(ByVal campos As String(), ByVal condicion As String, ByVal tabla As String, ByRef datos As Documento) As Boolean
         ConsultarDocumento = False

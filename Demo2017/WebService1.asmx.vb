@@ -78,9 +78,9 @@ Public Class WebService1
 
     'End Function
     <WebMethod()> _
-    Public Function GenerarArchivoDatosPrueba(ByVal Folio As String) As Boolean
+    Public Function GenerarArchivoDatosPrueba(ByVal Folio As String, ByVal iddocu As String) As Boolean
         Try
-            GenerarArchivo(Folio)
+            GenerarArchivo(Folio, iddocu)
             Return True
         Catch ex As Exception
             MsgBox("Error encontrado: " & ex.Message)
