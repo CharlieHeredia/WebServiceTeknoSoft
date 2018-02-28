@@ -41,8 +41,8 @@ Module Funciones_Globales
 
     Public Function VerificacionExistenciaDirectorioConfiguracionWebService()
         'FUNCIÓN PARA CREAR EL DIRECTORIO DONDE SE ALMACENAN LOS ARCHIVOS DE CONFIGURACIÓN DEL WEB SERVICE.'
-        If Directory.Exists("C:\TeknoCom\WebService") = False Then
-            Directory.CreateDirectory("C:\TeknoCom\WebService")
+        If Directory.Exists("C:\TeknoCom\WebService") = False Then 'VAIDACIÓN DE EXISTENCIA DE DIRECTORIO.'
+            Directory.CreateDirectory("C:\TeknoCom\WebService") 'CREACIÓN DEL DIRECTORIO
         End If
     End Function
     Public Function CargarArchivoConfiguracionWebService() As Boolean
@@ -93,7 +93,7 @@ Module Funciones_Globales
             File.WriteAllLines(DireccionArchivoConfiguracionWebService, texto)
             'File.Encrypt("C:\TeknoCom\WebService\ConfiguracionConexion.txt")
             ArchivoConfiguracionWebService = True
-            EncryptFile(DireccionArchivoConfiguracionWebService, Key)
+            EncryptFile(DireccionArchivoConfiguracionWebService, Key) 'ENCRIPTACIÓN DEL ARCHIVO.'
             Return True
         Else
             Return False
