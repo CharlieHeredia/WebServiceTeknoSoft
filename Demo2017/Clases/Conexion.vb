@@ -106,6 +106,7 @@ Public Class Conexion
         Next
         MsgBox("Texto recogido: " & renglon)
         '<---------------------------------------- INFORMACIÓN DEL EMISOR.'
+        ' LA CONSULTA REALIZA UNA CONEXIÓN SQL DISTUNTA A LAS OTRAS CONSULTAS DEBIDO A QUE UTILIZA OTRA BASE DE DATOS.'
         Dim ConexionSQLTemporal As New SqlConnection()
         ds = New DataSet
         ConexionSQLTemporal.ConnectionString = "Data Source=" & hostname & ";Initial Catalog=CompacWAdmin ;User Id=" & usuarioBD & ";Password=" & contra 'INFORMACIÓN DE LA CONEXIÓN.'
@@ -121,6 +122,7 @@ Public Class Conexion
         Next
         MsgBox("Texto: " & renglon)
         ConexionSQLTemporal.Close()
+        ' TERMINA USO DE CONEXION SQL TEMPORAL.'
         ds = New DataSet
         cmd = New SqlCommand("SELECT CNOMBREEMPRESA,CRFCEMPRESA,CREGIMFISC,CIMPUESTO1,CIMPUESTO2,CIMPUESTO3,CNOMBREIMPUESTO1,CNOMBREIMPUESTO2,CNOMBREIMPUESTO3 from admParametros where CIDEMPRESA = " & renglon, ConexionesSQL)
         adaptador.SelectCommand = cmd
@@ -142,7 +144,14 @@ Public Class Conexion
         MsgBox("Texto: " & renglon)
         '<------------------------------------------------------------- INFORMACIÓN DE COMPROBANTE'
         ds = New DataSet
-        cmd = New SqlCommand("SELECT CSERIEDOCUMENTO,CFOLIO,admDocumentos.CTIMESTAMP,CMETODOPAG,CLUGAREXPE,admMonedas.CCLAVESAT from admDocumentos INNER JOIN admMonedas on admMonedas.CIDMONEDA = admDocumentos.CIDMONEDA;")
+        cmd = New SqlCommand("SELECT CSERIEDOCUMENTO,CFOLIO,admDocumentos.CTIMESTAMP,CMETODOPAG,CLUGAREXPE,admMonedas.CCLAVESAT from admDocumentos INNER JOIN admMonedas on admMonedas.CIDMONEDA = admDocumentos.CIDMONEDA Where CIDDOCUMENTO=;" & iddocu, ConexionesSQL)
+        '**Aclaración
+        '*CLUGAREXPE contiene toda la dirección del cliente, dentro de esa misma tabla no se encuentra un identificador para hacer la referencia a la tabla de admDomicilios,
+        'por lo tanto, se recomienda realizar un substring del dato.
+        '*VERSION se deja en 3.3.
+        '*SUBTOTAL se obtiene de la suma de todos los totales sin incluir el impuesto.
+        '*TOTAL es la sumatoria del subtotal con el total de todos los impuestos.
+        '*FORMA DE PAGO Y TIPO DE COMPROBANTE no se encuentran dentro de las tablas de SQL.
     End Function
     Public Function ConsultarDocumento(ByVal campos As String(), ByVal condicion As String, ByVal tabla As String, ByRef datos As Documento) As Boolean
         ConsultarDocumento = False
