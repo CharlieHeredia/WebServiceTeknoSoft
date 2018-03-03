@@ -96,7 +96,7 @@ Public Class Conexion
         Dim ds As New DataSet 'DATASET UTILIZADO PARA PASAR LA INFORMACIÓN DEL ADAPTADOR A ESTÉ.'
         VerificacionExistenciaDirectorioPrincipal()
         '<-------------------------------------- INFORMACIÓN DEL RECEPTOR.'
-        Dim cmd As New SqlCommand("SELECT admClientes.CRFC,admClientes.CRAZONSOCIAL,CUSOCFDI from admDocumentos INNER JOIN admClientes on admClientes.CIDCLIENTEPROVEEDOR = admDocumentos.CIDCLIENTEPROVEEDOR WHERE CFOLIO = " & Folio, ConexionesSQL)
+        Dim cmd As New SqlCommand("SELECT admClientes.CRFC,admClientes.CRAZONSOCIAL,CUSOCFDI from admDocumentos INNER JOIN admClientes on admClientes.CIDCLIENTEPROVEEDOR = admDocumentos.CIDCLIENTEPROVEEDOR WHERE CFOLIO = " & Folio & " AND CIDDOCUMENTODE = 4", ConexionesSQL)
         adaptador.SelectCommand = cmd 'EJECUCION DEL COMANDO SQL.'
         '<---------------------- TERMINA CONSULTA SQL --------------------------------->'
         adaptador.Fill(ds)
@@ -152,6 +152,8 @@ Public Class Conexion
         '*SUBTOTAL se obtiene de la suma de todos los totales sin incluir el impuesto.
         '*TOTAL es la sumatoria del subtotal con el total de todos los impuestos.
         '*FORMA DE PAGO Y TIPO DE COMPROBANTE no se encuentran dentro de las tablas de SQL.
+
+
     End Function
     Public Function ConsultarDocumento(ByVal campos As String(), ByVal condicion As String, ByVal tabla As String, ByRef datos As Documento) As Boolean
         ConsultarDocumento = False
