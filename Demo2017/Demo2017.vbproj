@@ -89,6 +89,7 @@
   <ItemGroup>
     <Compile Include="Clases\Aduana.vb" />
     <Compile Include="Clases\Comprobante.vb" />
+    <Compile Include="Clases\Concepto.vb" />
     <Compile Include="Clases\Conexion.vb" />
     <Compile Include="Clases\Configuracion.vb" />
     <Compile Include="Clases\Documento.vb" />

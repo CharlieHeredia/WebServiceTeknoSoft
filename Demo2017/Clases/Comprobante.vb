@@ -11,6 +11,7 @@
     Dim total As String = ""
     Dim LugarExpedicion As String = ""
     Dim NumCtaPago As String = ""
+    Dim ClaveSATModena As String = ""
 
     Public Property _serie As String
         Get
@@ -99,6 +100,14 @@
         End Get
         Set(value As String)
             NumCtaPago = value
+        End Set
+    End Property
+    Public Property _ClaveSATMoneda() As String
+        Get
+            Return ClaveSATModena
+        End Get
+        Set(value As String)
+            ClaveSATModena = value
         End Set
     End Property
 End Class

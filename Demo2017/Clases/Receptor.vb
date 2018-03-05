@@ -1,15 +1,15 @@
 ﻿Public Class Receptor
-    Dim nombre As String = ""
-    Dim RFC As String = ""
-    Dim usocfdi As String = ""
+    Dim razonsocial As String = "" ' RAZON SOCIAL.'
+    Dim RFC As String = "" 'RFC.'
+    Dim usocfdi As String = "" ' USOCFDI.'
 
     'Datos Receptor'
-    Public Property _nombre() As String
+    Public Property _razonsocial() As String
         Get
-            Return nombre
+            Return razonsocial
         End Get
         Set(value As String)
-            nombre = value
+            razonsocial = value
         End Set
     End Property
     Public Property _RFC() As String
