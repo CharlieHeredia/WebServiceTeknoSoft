@@ -151,39 +151,53 @@ Public Class Conexion
         MsgBox("Texto: " & renglon)
         '<--------------------------------------------------------- INFORMACIÓN DE CONCEPTO'
         ds = New DataSet
-        cmd = New SqlCommand("SELECT admProductos.CCLAVESAT,CCLAVEINT,CNOMBREUNIDAD,CUNIDADES,CCODIGOPRODUCTO,CNOMBREPRODUCTO,CPRECIO,CNETO FROM admMovimientos INNER JOIN admProductos on admProductos.CIDPRODUCTO = admMovimientos.CIDPRODUCTO INNER JOIN admUnidadesMedidaPeso on admUnidadesMedidaPeso.CIDUNIDAD = admMovimientos.CIDUNIDAD WHERE CIDDOCUMENTO =" & iddocu, ConexionesSQL)
+        cmd = New SqlCommand("SELECT admProductos.CCLAVESAT,CCLAVEINT,CNOMBREUNIDAD,CUNIDADES,CCODIGOPRODUCTO,CNOMBREPRODUCTO,CPRECIO,CNETO,admMovimientos.CIDPRODUCTO FROM admMovimientos INNER JOIN admProductos on admProductos.CIDPRODUCTO = admMovimientos.CIDPRODUCTO INNER JOIN admUnidadesMedidaPeso on admUnidadesMedidaPeso.CIDUNIDAD = admMovimientos.CIDUNIDAD WHERE CIDDOCUMENTO =" & iddocu, ConexionesSQL)
         adaptador.SelectCommand = cmd
         adaptador.Fill(ds)
         renglon = ""
         Dim DatosConcepto(ds.Tables(0).Rows.Count) As Concepto
         Dim i As Integer = 0
         For Each row As DataRow In ds.Tables(0).Rows
-            renglon = row(0).ToString() + "|" + row(1).ToString() + "|" + row(2).ToString() + "|" + row(3).ToString() + "|" + row(4).ToString() + "|" + row(5).ToString() + "|" + row(6).ToString() + "|" + row(7).ToString() + "¬"
+            'renglon = row(0).ToString() + "|" + row(1).ToString() + "|" + row(2).ToString() + "|" + row(3).ToString() + "|" + row(4).ToString() + "|" + row(5).ToString() + "|" + row(6).ToString() + "|" + row(7).ToString() + "¬"
             DatosConcepto(i)._ClaveSAT = row(0).ToString.Trim() 'CLAVE SAT.'
-            DatosConcepto(i)._ClaveINT = row(1).ToString.Trim() 'CLAVE INT.'
-            DatosConcepto(i)._NombreUnidad = row(2).ToString.Trim() 'NOMBRE DE UNIDAD.'
-            DatosConcepto(i)._Unidades = row(3).ToString.Trim() 'UNIDADES.'
+            DatosConcepto(i)._ClaveINT = row(1).ToString.Trim() 'CLAVE DE COMERCIO EXTERNO.'
+            DatosConcepto(i)._NombreUnidad = row(2).ToString.Trim() 'NOMBRE DE LA UNIDAD.'
+            DatosConcepto(i)._Unidades = row(3).ToString.Trim() 'ID DE UNIDADES.'
             DatosConcepto(i)._CodigoProducto = row(4).ToString.Trim() 'CODIGO DE PRODUCTO.'
             DatosConcepto(i)._NombreProducto = row(5).ToString.Trim() 'NOMBRE DE PRODUCTO.'
             DatosConcepto(i)._Precio = row(6).ToString.Trim() 'PRECIO.'
             DatosConcepto(i)._Neto = row(7).ToString.Trim() 'NETO.'
+            DatosConcepto(i)._IdProducto = row(8).ToString.Trim() 'ID DEL PRODUCTO.'
+
+            'CONSULTA PARA OBTENER LA DESCRIPCIÓN DEL PRODUCTO EN LA TABLA DE PRODUCTOS.'
+            'SE UTILIZA EL ID DE PRODUCTO ENCONTRADO EN LA CONSULTA ANTERIOR.'
+            cmd = New SqlCommand("SELECT CDESCRIPCIONPRODUCTO FROM admProductos Where CIDPRODUCTO= " & DatosConcepto(i)._IdProducto, ConexionesSQL)
+            Dim lector As SqlDataReader
+            lector = cmd.ExecuteReader()
+            If IsDBNull(lector(0)) Then 'VALIDACIÓN DE DATO NULO
+                DatosConcepto(i)._Descripcion = ""
+            Else
+                DatosConcepto(i)._Descripcion = lector(0).ToString.Trim()
+            End If
             i += 1 'AUMENTO DE CONTADOR.'
+            lector.Close()
         Next
         MsgBox("Texto: " & renglon)
         '<------------------------------------------------------------- INFORMACIÓN DE COMPROBANTE'
         Dim DatosComprobante As New Comprobante
         ds = New DataSet
-        cmd = New SqlCommand("SELECT CSERIEDOCUMENTO,CFOLIO,admDocumentos.CTIMESTAMP,CMETODOPAG,CLUGAREXPE,admMonedas.CCLAVESAT from admDocumentos INNER JOIN admMonedas on admMonedas.CIDMONEDA = admDocumentos.CIDMONEDA Where CIDDOCUMENTO=;" & iddocu, ConexionesSQL)
+        cmd = New SqlCommand("SELECT CSERIEDOCUMENTO,CFOLIO,admDocumentos.CTIMESTAMP,CMETODOPAG,CLUGAREXPE,admMonedas.CCLAVESAT,admDocumentos.CNATURALEZA from admDocumentos INNER JOIN admMonedas on admMonedas.CIDMONEDA = admDocumentos.CIDMONEDA Where CIDDOCUMENTO=;" & iddocu, ConexionesSQL)
         adaptador.SelectCommand = cmd
         adaptador.Fill(ds)
         renglon = ""
         For Each row As DataRow In ds.Tables(0).Rows
-            DatosComprobante._serie = row(0).ToString.Trim()
-            DatosComprobante._folio = row(1).ToString.Trim()
-            DatosComprobante._fecha = row(2).ToString.Trim()
-            DatosComprobante._metodoDePago = row(3).ToString.Trim()
-            DatosComprobante._lugarExpedicion = row(4).ToString.Trim()
-            DatosComprobante._ClaveSATMoneda = row(5).ToString.Trim()
+            DatosComprobante._serie = row(0).ToString.Trim() 'SERIE'
+            DatosComprobante._folio = row(1).ToString.Trim() 'FOLIO'
+            DatosComprobante._fecha = row(2).ToString.Trim() 'FECHA'
+            DatosComprobante._metodoDePago = row(3).ToString.Trim() 'MÉTODO DE PAGO'
+            DatosComprobante._lugarExpedicion = row(4).ToString.Trim() 'LUGAR DE EXPEDICIÓN.'
+            DatosComprobante._ClaveSATMoneda = row(5).ToString.Trim() 'CLAVE SAT MONEDA'
+            DatosComprobante._tipoDeComprobante = row(6).ToString.Trim() 'NATURALEZA'
         Next
         '**Aclaración
         '*CLUGAREXPE contiene toda la dirección del cliente, dentro de esa misma tabla no se encuentra un identificador para hacer la referencia a la tabla de admDomicilios,
@@ -194,101 +208,158 @@ Public Class Conexion
         '*FORMA DE PAGO Y TIPO DE COMPROBANTE no se encuentran dentro de las tablas de SQL.
 
         '------------------- TERMINA CONSULTA DE DATOS PARA LLENAR EL ARCHIVO XML.'
+        If DatosComprobante._tipoDeComprobante = "0" Then 'INGRESO/CARGO'
+            DatosComprobante._tipoDeComprobante = "I"
+        ElseIf DatosComprobante._tipoDeComprobante = "1" Then 'EGRESO/ABONO'
+            DatosComprobante._tipoDeComprobante = "E"
+        End If
+        ' 222222 FALTA OBTENER EL VALOR DE LA CONSULTA 2222222 <---------------------------------------------//////
+        If DatosComprobante._formaDePago.ToUpper = "PAGO EN UNA SOLA EXHIBICIÓN" Then
+            DatosComprobante._formaDePago = "PUE"
+        ElseIf DatosComprobante._formaDePago.Trim.ToUpper = "PAGO EN PARCIALIDADES O DIFERIDO" Then
+            DatosComprobante._formaDePago = "PPD"
+        End If
+        If DatosEmisor._regimenFiscal = "REGIMEN GENERAL DE LEY PERSONAS MORALES" Then ' esta parte puede ponerse configurable
+            DatosEmisor._regimenFiscal = "601"
+        End If
+        'facturaxml._receptorUsoCfdi = "P01"
+        If DatosComprobante._metodoDePago.ToUpper = "NO APLICA" Then 'Por definir, cuando es por definir, siempre requerira comprobante de pagos
+            DatosComprobante._metodoDePago = "99"
+        End If
+        If DatosComprobante._metodoDePago = "99" Then
+            DatosComprobante._formaDePago = "PPD"
+            ' Else   ----------' comentado para que tome la forma de pago PPD cuando el cliente asi lo requiera
+            '    facturaxml._formaDePago = "PUE"
+        End If
+        If DatosComprobante._formaDePago = "" Then
+            DatosComprobante._formaDePago = "PPD"
+        End If
+        'facturaxml._errores += errores
+        '--------conexion a tabla nueva donde se encontrara la forma de pago del cliente para que no lleve 99 por definir
+        ' Dim dtdatoscliente As New DataTable
+        ' conexiones.conectar(ArchivoAccess, 2)
+        'conexiones.consultarTabla("FormaPago,metododPago,usocfdi", "tablaaccessnueva", " where cliente = " & facturaxml._nocliente , dtdatoscliente)
+        'dim rowf as datarow = dtdatoscliente.rows(0)
+        'facturaxml._metodoDePago= rowf("FormaPago")
+        'facturaxml._metodoDePago= rowf("metododPago")
+        'facturaxml._metodoDePago= rowf("usocfdi")
+        ''aqui una prueba para no estar repitiendo mucho codigo---- ya quedo la prueba
+        Dim numreg As String = ""
+        If DatosReceptor._RFC = "XEXX010101000" Then 'FACTURACIÓN EXTRANJERO'
+
+        Else
+            'facturaxml._ComercioExterior = False
+        End If
+        'If facturaxml._ComercioExterior Then
+        '    todotexto = "<?xml version=""1.0"" encoding=""UTF-8""?>" & vbCrLf & "<cfdi:Comprobante xmlns:cfdi=""http://www.sat.gob.mx/cfd/3"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:cce11=""http://www.sat.gob.mx/ComercioExterior11""" _
+        '                  & " xsi:schemaLocation=""http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd http://www.sat.gob.mx/ComercioExterior11 http://www.sat.gob.mx/sitio_internet/cfd/ComercioExterior11/ComercioExterior11.xsd"" " & vbCrLf & "Version=""3.3""" _
+        '                  & " Serie=""" & facturaxml._serie & """ Folio=""" & facturaxml._folio & """ Fecha=""" & fecha & """" & vbCrLf & " FormaPago=""" & facturaxml._metodoDePago & """" & vbCrLf _
+        '                  & " SubTotal=""" & facturaxml._subTotal.Replace(",", "") & TextoMoneda & textoDescuento & """ Total=""" & facturaxml._total33.Replace(",", "") & """ TipoDeComprobante=""" & facturaxml._tipoDeComprobante & """" _
+        '                  & " MetodoPago=""" & facturaxml._formaDePago & """ LugarExpedicion=""" & facturaxml._emisorDomfiscalCP & TextoLimiteTotal _
+        '                  & textoRelacion & vbCrLf & "<cfdi:Emisor Rfc=""" & facturaxml._EmisorRFC & """ Nombre=""" & facturaxml._EmisorNombre & """ RegimenFiscal=""" & facturaxml._RegimenFiscal & """></cfdi:Emisor>" _
+        '                  & vbCrLf & "<cfdi:Receptor Rfc=""" & facturaxml._receptorRFC & """ Nombre=""" & facturaxml._receptorNombre & """ UsoCFDI=""" & facturaxml._receptorUsoCfdi & """ ResidenciaFiscal=""" & facturaxml._ResidenciaFiscal & """ NumRegIdTrib=""" & facturaxml._NumRegIDTrib & """></cfdi:Receptor>" _
+        '                  & vbCrLf & "<cfdi:Conceptos>" & vbCrLf
+        'Else
+
+        '    todotexto = "<?xml version=""1.0"" encoding=""utf-8""?>" & vbCrLf & "<cfdi:comprobante xmlns:cfdi=""http://www.sat.gob.mx/cfd/3"" xmlns:xsi=""http://www.w3.org/2001/xmlschema-instance""" _
+        '                   & " xsi:schemalocation=""http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd"" " & vbCrLf & "version=""3.3""" _
+        '                   & " serie=""" & facturaxml._serie & """ folio=""" & facturaxml._folio & """ fecha=""" & fecha & """" & vbCrLf & " formapago=""" & facturaxml._metododepago & """" & vbCrLf _
+        '                   & " subtotal=""" & facturaxml._subtotal.replace(",", "") & textomoneda & textodescuento & """ total=""" & facturaxml._total33.replace(",", "") & """ tipodecomprobante=""" & facturaxml._tipodecomprobante & """" _
+        '                   & " metodopago=""" & facturaxml._formadepago & """ lugarexpedicion=""" & facturaxml._emisordomfiscalcp & textolimitetotal _
+        '                   & textorelacion & vbCrLf & "<cfdi:emisor rfc=""" & facturaxml._emisorrfc & """ nombre=""" & facturaxml._emisornombre & """ regimenfiscal=""" & facturaxml._regimenfiscal & """/>" _
+        '                   & vbCrLf & "<cfdi:receptor rfc=""" & facturaxml._receptorrfc & """ nombre=""" & facturaxml._receptornombre & """ usocfdi=""" & facturaxml._receptorusocfdi & """/>" _
+        '                   & vbCrLf & "<cfdi:conceptos>" & vbCrLf
+        'End If
+        Dim cantidadTotalIva As Double = 0
+        For Each producto As Concepto In DatosConcepto
+            'If producto._unidad.ToUpper = "PIEZAS" Or producto._unidad.ToUpper = "PIEZA" Then
+            'producto._claveunidad = "H87"
+            ' End If
+            '------------------------ Se pone clave de producto para hacer pruebas
+            Dim cadena As String = "<cfdi:Concepto ClaveProdServ= """ & producto._CodigoProducto & """ NoIdentificacion=""" & producto._noIdentificacion & """ Cantidad=""" & producto._cantidad & """ ClaveUnidad=""" _
+                        & producto._claveunidad & """ Unidad=""" & producto._unidad & """ Descripcion=""" & producto._descripcion & """ ValorUnitario=""" & producto._valorUnitario.Replace(",", "") & """ Importe=""" & producto._importe.Replace(",", "")
+
+            If tieneDescuento Then
+                cadena += """ Descuento=""" & producto._descuento
+            End If
+            cadena += """>"
+            'aqui se puede hace una condicion si maneja impuestos o no y si es mas de un impuesto, ahora solo se toma en cuenta el IVA
+            ' Dim CantidadIva As String = (Convert.ToDecimal(Math.Round((CDbl(producto._importe)) * 0.16, 2))).ToString("N")
+            'cantidadTotalIva += CDbl(CantidadIva)
+            'MsgBox(facturaxml._porcentajeIVA & " " & producto._iva)
+            If CDbl(facturaxml._porcentajeIVA) <> 0.0 And CDbl(producto._iva) <> 0.0 Then
+                cadena += vbCrLf & "<cfdi:Impuestos>" & vbCrLf & "<cfdi:Traslados>" & vbCrLf & "<cfdi:Traslado Base=""" & producto._importe.Replace(",", "") & """ Impuesto=""002"" TipoFactor=""Tasa"" TasaOCuota=""0.160000"" Importe=""" & producto._iva.Replace(",", "") & """/>" _
+                    & vbCrLf & "</cfdi:Traslados>" & vbCrLf & "</cfdi:Impuestos>"
+            ElseIf CDbl(facturaxml._porcentajeIVA) = 0 Or CDbl(producto._iva) = 0 Then
+                cadena += vbCrLf & "<cfdi:Impuestos>" & vbCrLf & "<cfdi:Traslados>" & vbCrLf & "<cfdi:Traslado Base=""" & producto._importe.Replace(",", "") & """ Impuesto=""002"" TipoFactor=""Exento""/>" _
+                 & vbCrLf & "</cfdi:Traslados>" & vbCrLf & "</cfdi:Impuestos>"
+            End If
+
+            'numero de pedimento
+            If producto._numero <> "" And facturaxml._receptorRFC.ToUpper <> "XEXX010101000" Then
+                Dim numeroPedimento As String = ""
+                ' MsgBox(numeroPedimento)
+
+                ' numero de pedimento cierra
+
+                cadena += vbCrLf & "<cfdi:InformacionAduanera NumeroPedimento=""" & producto._numero & """/>"
+            End If
+            cadena += vbCrLf & "</cfdi:Concepto>"
+            todotexto += cadena & vbCrLf
+        Next
     End Function
     Public Function PrubaGeneradorXML()
-        Dim nombre As String = "C:\XML\" & carpeta & "\" & facturaxml._folio & ".xml"
-        Dim w As StreamWriter = New StreamWriter(nombre, False, System.Text.Encoding.UTF8)
-        Dim hora As Date = Format(Now, "HH:mm:ss")
-        hora = hora.AddSeconds(segundos)
-        Dim fecha As String = Format(Date.Today, "yyyy-MM-dd") & "T" & hora.ToString("HH:mm:ss")
-        Dim idfactura As String = ""
-        fecha = fecha.Trim
-        '  MsgBox(fecha)
-        Dim todotexto As String = ""
-        ' Dim monedaExtranjera As Boolean = False
-        Dim TextoMoneda As String = ""
-        Dim textoDescuento As String = ""
-        Dim textoRelacion As String = ""
-        If monedaExtranjera Then
-            TextoMoneda = """ TipoCambio=""" & facturaxml._TipoCambio & """ Moneda=""" & facturaxml._Moneda
-        Else
-            TextoMoneda = """ Moneda=""" & facturaxml._Moneda
-        End If
+        
+    
+        
+        
+        
+        
+        
+        
 
-        If tieneDescuento Then  ' esta parte aun no se añade al xml 28/06/2017 11:41 am
-            textoDescuento = """ descuento=""" & facturaxml._Descuento
-            If facturaxml._motivoDescuento <> "" Then
-                textoDescuento += """ motivoDescuento=""" & facturaxml._motivoDescuento
-            End If
-            'textoDescuento2 = """"
-        End If
-        If relacion Then
-            textoRelacion = """ FolioFiscalOrig=""" & facturaxml._FechaFolioFiscalOrig & """ SerieFolioFiscalOrig=""" & facturaxml._SerieFolioFiscalOrig _
-                & """ FechaFolioFiscalOrig=""" & facturaxml._FechaFolioFiscalOrig & """ MontoFolioFiscalOrig=""" & facturaxml._MontoFolioFiscalOrig
-        Else
-            textoRelacion = ""
-        End If
-        todotexto = "<?xml version=""1.0"" encoding=""UTF-8""?><cfdi:Comprobante xmlns:cfdi=""http://www.sat.gob.mx/cfd/3"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance""" _
-              & " xsi:schemaLocation=""http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv32.xsd""" & vbCrLf & "version=""3.2""" _
-              & " serie=""" & facturaxml._serie & """ folio=""" & facturaxml._folio & """ fecha=""" & fecha & """ formaDePago=""" & facturaxml._formaDePago & """" & vbCrLf & "" _
-              & " subTotal=""" & facturaxml._subTotal & textoDescuento & TextoMoneda & """ total=""" & facturaxml._total & """ tipoDeComprobante=""" & facturaxml._tipoDeComprobante & """" & vbCrLf & "" _
-              & " metodoDePago=""" & facturaxml._metodoDePago & """ LugarExpedicion=""" & facturaxml._EmisorDomFiscalCalle & " " _
-              & facturaxml._emisorDomFiscalnoExt & " " & facturaxml._emisorDomFiscalnoInt & ", " & facturaxml._emisorDomFiscalColonia & ", " _
-              & facturaxml._emisorDomfiscalCP & ", " & facturaxml._emisorDomFiscalLocalidad & ", " & facturaxml._emisorDomFiscalMunicipio & ", " & facturaxml._emisorDomFiscalEstado & ", " & facturaxml._emisorDomFiscalPais & """" & vbCrLf & "NumCtaPago=""" & facturaxml._NumCtaPago & textoRelacion & """>" _
-          & "<cfdi:Emisor rfc=""" & facturaxml._EmisorRFC & """ nombre=""" & facturaxml._EmisorNombre & """>" _
-  & "<cfdi:DomicilioFiscal calle=""" & facturaxml._EmisorDomFiscalCalle & """ noExterior=""" & facturaxml._emisorDomFiscalnoExt & """ noInterior=""" & facturaxml._emisorDomFiscalnoInt & """ colonia=""" _
-              & facturaxml._emisorDomFiscalColonia & """ localidad=""" & facturaxml._emisorDomFiscalLocalidad & """ municipio=""" & facturaxml._emisorDomFiscalMunicipio & """ estado=""" & facturaxml._emisorDomFiscalEstado _
-              & """ pais=""" & facturaxml._emisorDomFiscalPais & """ codigoPostal=""" & facturaxml._emisorDomfiscalCP & """/>" & vbCrLf & "<cfdi:RegimenFiscal Regimen=""" & facturaxml._RegimenFiscal & """/></cfdi:Emisor>" _
-& "<cfdi:Receptor rfc=""" & facturaxml._receptorRFC & """ nombre=""" & facturaxml._receptorNombre & """>" _
-& "<cfdi:Domicilio calle=""" & facturaxml._receptorDomCalle & """ noInterior=""" & facturaxml._receptorDomNoInt & """ colonia=""" _
-               & facturaxml._receptorDomColonia & """ localidad=""" & facturaxml._receptorDomLocalidad & """ municipio=""" _
-               & facturaxml._receptorDomMunicipio & """ estado=""" & facturaxml._receptorDomEstado & """ pais=""" & facturaxml._receptorDomPais _
-               & """ codigoPostal=""" & facturaxml._receptorDomCP & """/></cfdi:Receptor>" & vbCrLf & "" _
-& "<cfdi:Conceptos>" & vbCrLf & ""
-
-
-        For Each producto As Productos_Factura In listaProductos
-            Dim cadena As String = "<cfdi:Concepto cantidad=""" & producto._cantidad & """ unidad=""" & producto._unidad & """ noIdentificacion=""" & producto._noIdentificacion _
-                        & """ descripcion=""" & producto._descripcion & """ valorUnitario=""" & producto._valorUnitario & """ importe=""" & producto._importe & """>"
-
-            If producto._numero <> "" Then
-                Dim fechas() As String
-                Dim fecha2 As String
-                fechas = producto._fecha.Split("/")
-                fecha2 = fechas(2) & "-" & fechas(1) & "-" & fechas(0)
-                cadena += "<cfdi:InformacionAduanera numero=""" & producto._numero & """ fecha=""" & fecha2 & """ aduana=""" & producto._aduana & """/>"
-            End If
-            cadena += "</cfdi:Concepto>" & vbCrLf & ""
-            todotexto += cadena
-        Next
-        todotexto += "</cfdi:Conceptos>" _
-& "<cfdi:Impuestos totalImpuestosTrasladados=""" & facturaxml._TotalImpuestosTraslados & """>" & vbCrLf & "" _
-        & "<cfdi:Traslados><cfdi:Traslado impuesto=""IVA"" tasa=""16.00"" importe=""" & facturaxml._importeTotalIva & """/></cfdi:Traslados></cfdi:Impuestos></cfdi:Comprobante>"
-
-        'If todotexto.Contains("&") Then
-
-
-        'End If
-        w.WriteLine(todotexto)
-        w.Close()
-
-        comprobarIdcomprocante("idfactura", "facturas.dbf", idfactura)
-        Conexiones.conectar(empresaGlobal)
-        Dim comprobarfolio As String = ""
-        Conexiones.consultaValor(" folio", " facturas", " where folio='" & facturaxml._folio & "'", comprobarfolio)
-        If comprobarfolio = "" Then
-            '  MsgBox(facturaxml._cobserva01)
-            validafactura(facturaxml, listaProductos) ' la funcion validafactura es para cambiar caracteres que se deben cambiar para insertar en la base de datos
-            ' MsgBox(facturaxml._cobserva01)
-            Dim band As Boolean = False
-            insertar_factura(facturaxml, idfactura, nombre, fecha, band)
-            If band Then
-                insertar_productos(listaProductos, idfactura)
-            End If
+        
+        'MsgBox(cantidadTotalIva)
+        'aqui totalimpuestos = al importe de iva
+        todotexto += "</cfdi:Conceptos>"
+        If facturaxml._porcentajeIVA <> "0" Then
+            todotexto += vbCrLf & "<cfdi:Impuestos TotalImpuestosTrasladados=""" & facturaxml._TotalImpuestosTraslados.Replace(",", "") & """>" _
+            & vbCrLf & "<cfdi:Traslados>" & vbCrLf & "<cfdi:Traslado Impuesto=""002"" TipoFactor=""Tasa"" TasaOCuota=""0.160000"" Importe=""" & facturaxml._importetotalIva33.Replace(",", "") & """/></cfdi:Traslados></cfdi:Impuestos>"
+        ElseIf facturaxml._porcentajeIVA = "0" Then
+            '  todotexto += vbCrLf & "<cfdi:Impuestos TotalImpuestosTrasladados=""" & "0.00" & """>" _
+            ' & vbCrLf & "<cfdi:Traslados>" & vbCrLf & "<cfdi:Traslado Impuesto=""002"" TipoFactor=""Tasa"" TasaOCuota=""0.000000"" Importe=""" & "0.00" & """/></cfdi:Traslados></cfdi:Impuestos>"
 
         End If
-        'MsgBox("se creo " & nombre)
-        GC.Collect()
+        If facturaxml._ComercioExterior Then
+            todotexto += vbCrLf & "<cfdi:Complemento>" & vbCrLf & "<cce11:ComercioExterior Version=""1.1"" TipoOperacion=""2"" ClaveDePedimento=""A1"" CertificadoOrigen=""0"" Incoterm=""" _
+                & facturaxml._intercom & """ Subdivision=""0"" TipoCambioUSD=""" & facturaxml._tipoCambioUSD & """ TotalUSD=""" & facturaxml._totalUSD & """>" _
+                & vbCrLf & "<cce11:Emisor >" & vbCrLf _
+                & "<cce11:Domicilio Calle=""" & facturaxml._EmisorDomFiscalCalle & """ NumeroExterior=""" & facturaxml._emisorDomFiscalnoExt & """ Colonia=""" _
+                & "1746" & """ Estado=""MOR"" Pais=""MEX"" CodigoPostal=""62760""/>" & vbCrLf _
+                & "</cce11:Emisor>" & vbCrLf _
+                & "<cce11:Receptor>" & vbCrLf _
+                & "<cce11:Domicilio Calle=""" & facturaxml._receptorDomCalle & """ NumeroExterior=""" & facturaxml._receptorDomNoInt _
+                & """ Colonia=""" & facturaxml._receptorDomColonia & """ Estado="""" Pais="""" CodigoPostal=""" & facturaxml._receptorDomCP & """/>" _
+                & vbCrLf & "</cce11:Receptor>" & vbCrLf _
+                & "<cce11:Mercancias>"
+            For Each producto As Productos_Factura In listaProductos
+                If producto._descripcion = "SERVICIOS DE ASESORIA FINANCIERA" Then
+                    todotexto += vbCrLf & "<cce11:Mercancia NoIdentificacion=""" & producto._noIdentificacion & "" _
+                        & """ CantidadAduana=""1.00"" UnidadAduana=""99"" ValorUnitarioAduana=""" _
+                        & "0.00" & """ ValorDolares=""0.00"">" & vbCrLf & "</cce11:Mercancia>"
+                Else
+
+                    todotexto += vbCrLf & "<cce11:Mercancia NoIdentificacion=""" & producto._noIdentificacion & """ FraccionArancelaria=""" & producto._FraccionArancelaria _
+                        & """ CantidadAduana=""" & producto._CantidadAudana & """ UnidadAduana=""" & producto._UnidadAduana & """ ValorUnitarioAduana=""" _
+                        & producto._ValorUnitarioAduana & """ ValorDolares=""" & producto._ValorDolares & """>" & vbCrLf & "</cce11:Mercancia>"
+                End If
+
+            Next
+            todotexto += vbCrLf & "</cce11:Mercancias>" & vbCrLf & "</cce11:ComercioExterior>" & vbCrLf & "</cfdi:Complemento>"
+        End If
+        todotexto += "</cfdi:Comprobante>"
+
+        End If
     End Function
     Public Function ConsultarDocumento(ByVal campos As String(), ByVal condicion As String, ByVal tabla As String, ByRef datos As Documento) As Boolean
         ConsultarDocumento = False
