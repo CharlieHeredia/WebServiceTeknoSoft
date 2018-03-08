@@ -1,14 +1,14 @@
 ﻿Public Class Concepto
     'UN MOVIMIENTO EQUIVALE A UN PRODUCTO.'
-    Dim ClaveSAT As String = "" 'CLAVE DE SAT.'
+    Dim ClaveSAT As String = "" 'CLAVE DE SAT/CLAVE UNIDAD'
     Dim ClaveINT As String = "" 'CLAVE DE COMERCIO EXTERIOR.'
     Dim NombreUnidad As String = "" 'NOMBRE DE UNIDAD.'
-    Dim Unidades As String = "" 'ID DE UNIDADES'
+    Dim Unidades As String = "" 'CANTIDAD DE PRODUCTO'
     Dim CodigoProducto As String = "" 'CODIGO DE PRODUCTO.'
     Dim NombreProducto As String = "" 'NOMBRE DE PRODUCTO.'
     Dim Precio As String = "" 'PRECIO DEL PRODUCTO.'
     Dim Neto As String = "" 'IMPORTE NETO PARA EL MOVIMIENTO.'
-    Dim Descripcion As String = ""
+    Dim Descripcion As String = "" 'DESCRIPCIÓN DEL PRODUCTO.'
     Dim IdProducto As String = "" 'ID DEL PRODUCTO EN LA BASE DE DATOS.'
     Public Property _ClaveSAT() As String
         Get

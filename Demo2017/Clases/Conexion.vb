@@ -151,7 +151,7 @@ Public Class Conexion
         MsgBox("Texto: " & renglon)
         '<--------------------------------------------------------- INFORMACIÓN DE CONCEPTO'
         ds = New DataSet
-        cmd = New SqlCommand("SELECT admProductos.CCLAVESAT,CCLAVEINT,CNOMBREUNIDAD,CUNIDADES,CCODIGOPRODUCTO,CNOMBREPRODUCTO,CPRECIO,CNETO,admMovimientos.CIDPRODUCTO FROM admMovimientos INNER JOIN admProductos on admProductos.CIDPRODUCTO = admMovimientos.CIDPRODUCTO INNER JOIN admUnidadesMedidaPeso on admUnidadesMedidaPeso.CIDUNIDAD = admMovimientos.CIDUNIDAD WHERE CIDDOCUMENTO =" & iddocu, ConexionesSQL)
+        cmd = New SqlCommand("SELECT admProductos.CCLAVESAT,CCLAVEINT,CNOMBREUNIDAD,CUNIDADES,CCODIGOPRODUCTO,CNOMBREPRODUCTO,CPRECIO,CNETO,admMovimientos.CIDPRODUCTO,admProductos.CDESCRIPCIONPRODUCTO FROM admMovimientos INNER JOIN admProductos on admProductos.CIDPRODUCTO = admMovimientos.CIDPRODUCTO INNER JOIN admUnidadesMedidaPeso on admUnidadesMedidaPeso.CIDUNIDAD = admMovimientos.CIDUNIDAD WHERE CIDDOCUMENTO =" & iddocu, ConexionesSQL)
         adaptador.SelectCommand = cmd
         adaptador.Fill(ds)
         renglon = ""
@@ -159,28 +159,23 @@ Public Class Conexion
         Dim i As Integer = 0
         For Each row As DataRow In ds.Tables(0).Rows
             'renglon = row(0).ToString() + "|" + row(1).ToString() + "|" + row(2).ToString() + "|" + row(3).ToString() + "|" + row(4).ToString() + "|" + row(5).ToString() + "|" + row(6).ToString() + "|" + row(7).ToString() + "¬"
-            DatosConcepto(i)._ClaveSAT = row(0).ToString.Trim() 'CLAVE SAT.'
+            DatosConcepto(i)._ClaveSAT = row(0).ToString.Trim() 'CLAVE SAT./CLAVE UNIDAD'
             DatosConcepto(i)._ClaveINT = row(1).ToString.Trim() 'CLAVE DE COMERCIO EXTERNO.'
             DatosConcepto(i)._NombreUnidad = row(2).ToString.Trim() 'NOMBRE DE LA UNIDAD.'
-            DatosConcepto(i)._Unidades = row(3).ToString.Trim() 'ID DE UNIDADES.'
+            DatosConcepto(i)._Unidades = row(3).ToString.Trim() 'CANTIDAD DE PRODUCTO.'
             DatosConcepto(i)._CodigoProducto = row(4).ToString.Trim() 'CODIGO DE PRODUCTO.'
             DatosConcepto(i)._NombreProducto = row(5).ToString.Trim() 'NOMBRE DE PRODUCTO.'
             DatosConcepto(i)._Precio = row(6).ToString.Trim() 'PRECIO.'
             DatosConcepto(i)._Neto = row(7).ToString.Trim() 'NETO.'
             DatosConcepto(i)._IdProducto = row(8).ToString.Trim() 'ID DEL PRODUCTO.'
-
-            'CONSULTA PARA OBTENER LA DESCRIPCIÓN DEL PRODUCTO EN LA TABLA DE PRODUCTOS.'
-            'SE UTILIZA EL ID DE PRODUCTO ENCONTRADO EN LA CONSULTA ANTERIOR.'
-            cmd = New SqlCommand("SELECT CDESCRIPCIONPRODUCTO FROM admProductos Where CIDPRODUCTO= " & DatosConcepto(i)._IdProducto, ConexionesSQL)
-            Dim lector As SqlDataReader
-            lector = cmd.ExecuteReader()
-            If IsDBNull(lector(0)) Then 'VALIDACIÓN DE DATO NULO
+            If IsDBNull(row(9)) Then 'VALIDACIÓN DE VALOR NULO.'
                 DatosConcepto(i)._Descripcion = ""
             Else
-                DatosConcepto(i)._Descripcion = lector(0).ToString.Trim()
+                DatosConcepto(i)._Descripcion = row(9).ToString.Trim() 'DESCRIPCIÓN DEL PRODUCTO.'
             End If
+            'CONSULTA PARA OBTENER LA DESCRIPCIÓN DEL PRODUCTO EN LA TABLA DE PRODUCTOS.'
+            'SE UTILIZA EL ID DE PRODUCTO ENCONTRADO EN LA CONSULTA ANTERIOR.'
             i += 1 'AUMENTO DE CONTADOR.'
-            lector.Close()
         Next
         MsgBox("Texto: " & renglon)
         '<------------------------------------------------------------- INFORMACIÓN DE COMPROBANTE'
@@ -276,12 +271,12 @@ Public Class Conexion
             'producto._claveunidad = "H87"
             ' End If
             '------------------------ Se pone clave de producto para hacer pruebas
-            Dim cadena As String = "<cfdi:Concepto ClaveProdServ= """ & producto._CodigoProducto & """ NoIdentificacion=""" & producto._noIdentificacion & """ Cantidad=""" & producto._cantidad & """ ClaveUnidad=""" _
-                        & producto._claveunidad & """ Unidad=""" & producto._unidad & """ Descripcion=""" & producto._descripcion & """ ValorUnitario=""" & producto._valorUnitario.Replace(",", "") & """ Importe=""" & producto._importe.Replace(",", "")
-
-            If tieneDescuento Then
-                cadena += """ Descuento=""" & producto._descuento
-            End If
+            Dim cadena As String = "<cfdi:Concepto ClaveProdServ= """ & producto._CodigoProducto & """ NoIdentificacion=""" & producto._ClaveSAT & """ Cantidad=""" & producto._Unidades & """ ClaveUnidad=""" _
+                        & producto._ClaveSAT & """ Unidad=""" & producto._NombreUnidad & """ Descripcion=""" & producto._Descripcion & """ ValorUnitario=""" & producto._Precio.Replace(",", "") & """ Importe=""" & producto._Neto.Replace(",", "")
+            'VALIDACIÓN SIGUIENTE AÚN NO ESTA EN FUNCIONAMIENTO.'
+            'If tieneDescuento Then   
+            'cadena += """ Descuento=""" & producto._descuento
+            'End If
             cadena += """>"
             'aqui se puede hace una condicion si maneja impuestos o no y si es mas de un impuesto, ahora solo se toma en cuenta el IVA
             ' Dim CantidadIva As String = (Convert.ToDecimal(Math.Round((CDbl(producto._importe)) * 0.16, 2))).ToString("N")
