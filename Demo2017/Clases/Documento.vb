@@ -18,6 +18,9 @@
     Dim aGasto1 As String = "" 'Valor por omisión = 0 (cero).'
     Dim aGasto2 As String = "" 'Valor por omisión = 0 (cero).'
     Dim aGasto3 As String = "" 'Valor por omisión = 0 (cero).'
+    Dim aImpuesto1 As String = "" 'IMPUESTO 1 (IVA).'
+    Dim aImpuestoTotalTraslado As String = "" 'TOTAL DE IMPUESTOS (EN ESTA CASO UNICAMENTE LA SUMATORIO DEL IVA)
+    Dim aMoneda As String = "" 'ALMACENA EL ID DE MONEDA.'
 
 
 
@@ -172,6 +175,30 @@
         End Get
         Set(value As String)
             aRazonSocial = value
+        End Set
+    End Property
+    Public Property _aImpuesto1() As String
+        Get
+            Return aImpuesto1
+        End Get
+        Set(value As String)
+            aImpuesto1 = value
+        End Set
+    End Property
+    Public Property _aImpuestoTotalTraslado() As String
+        Get
+            Return aImpuestoTotalTraslado
+        End Get
+        Set(value As String)
+            aImpuestoTotalTraslado = value
+        End Set
+    End Property
+    Public Property _aMoneda() As String
+        Get
+            Return aMoneda
+        End Get
+        Set(value As String)
+            value = aMoneda
         End Set
     End Property
 End Class

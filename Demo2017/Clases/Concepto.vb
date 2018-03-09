@@ -10,6 +10,9 @@
     Dim Neto As String = "" 'IMPORTE NETO PARA EL MOVIMIENTO.'
     Dim Descripcion As String = "" 'DESCRIPCIÓN DEL PRODUCTO.'
     Dim IdProducto As String = "" 'ID DEL PRODUCTO EN LA BASE DE DATOS.'
+    Dim Impuesto As String = "" 'IMPUESTO DEL MOVIMIENTO (IVA) / CAMPO CIMPUESTO1 (POR DEFAULT)'
+    Dim PorcentajeImpuesto As String = "" 'PORCENTAJE DEL IMPUESTO DEL MOVIMIENTO. / CAMPO CPORCENTAJEIMPUESTO1 (POR DEFAULT)'
+    Dim Importe As String = "" 'IMPORTE = CANTIDAD POR PRECIO UNITARIO.'
     Public Property _ClaveSAT() As String
         Get
             Return ClaveSAT
@@ -88,6 +91,30 @@
         End Get
         Set(value)
             IdProducto = value
+        End Set
+    End Property
+    Public Property _Impuesto() As String
+        Get
+            Return Impuesto
+        End Get
+        Set(value As String)
+            Impuesto = value
+        End Set
+    End Property
+    Public Property _PorcentajeImpuesto() As String
+        Get
+            Return PorcentajeImpuesto
+        End Get
+        Set(value As String)
+            PorcentajeImpuesto = value
+        End Set
+    End Property
+    Public Property _Importe() As String
+        Get
+            Return Importe
+        End Get
+        Set(value As String)
+            Importe = value
         End Set
     End Property
 End Class
