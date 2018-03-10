@@ -20,10 +20,15 @@
     Dim aGasto3 As String = "" 'Valor por omisión = 0 (cero).'
     Dim aImpuesto1 As String = "" 'IMPUESTO 1 (IVA).'
     Dim aImpuestoTotalTraslado As String = "" 'TOTAL DE IMPUESTOS (EN ESTA CASO UNICAMENTE LA SUMATORIO DEL IVA)
-    Dim aMoneda As String = "" 'ALMACENA EL ID DE MONEDA.'
-
-
-
+    Dim aClaveSATMoneda As String = "" 'CLAVE DEL SAT PARA MONEDA.'
+    Dim aReceptorColonia As String = ""
+    Dim aReceptorMunicipio As String = ""
+    Dim aReceptorLocalidad As String = ""
+    Dim aReceptorEstado As String = ""
+    Dim aReceptorNumInterior As String = ""
+    Dim aReceptorCodigoPostal As String = ""
+    Dim aReceptorCalle As String = ""
+    Dim aReceptorPais As String = ""
     'Documento'
     Public Property _aIdDocumento() As String
         Get
@@ -193,12 +198,76 @@
             aImpuestoTotalTraslado = value
         End Set
     End Property
-    Public Property _aMoneda() As String
+    Public Property _aClaveSATMoneda() As String
         Get
-            Return aMoneda
+            Return aClaveSATMoneda
         End Get
         Set(value As String)
-            value = aMoneda
+            aClaveSATMoneda = value
+        End Set
+    End Property
+    Public Property _aReceptorColonia() As String
+        Get
+            Return aReceptorColonia
+        End Get
+        Set(value As String)
+            aReceptorColonia = value
+        End Set
+    End Property
+    Public Property _aReceptorMunicipio() As String
+        Get
+            Return aReceptorMunicipio
+        End Get
+        Set(value As String)
+            aReceptorMunicipio = value
+        End Set
+    End Property
+    Public Property _aReceptorLocalidad() As String
+        Get
+            Return aReceptorLocalidad
+        End Get
+        Set(value As String)
+            aReceptorLocalidad = value
+        End Set
+    End Property
+    Public Property _aReceptorEstado() As String
+        Get
+            Return aReceptorEstado
+        End Get
+        Set(value As String)
+            aReceptorEstado = value
+        End Set
+    End Property
+    Public Property _aReceptorNumInterior() As String
+        Get
+            Return aReceptorNumInterior
+        End Get
+        Set(value As String)
+            aReceptorNumInterior = value
+        End Set
+    End Property
+    Public Property _aReceptorCodigoPostal() As String
+        Get
+            Return aReceptorCodigoPostal
+        End Get
+        Set(value As String)
+            aReceptorCodigoPostal = value
+        End Set
+    End Property
+    Public Property _aReceptorCalle() As String
+        Get
+            Return aReceptorCalle
+        End Get
+        Set(value As String)
+            aReceptorCalle = value
+        End Set
+    End Property
+    Public Property _aReceptorPais() As String
+        Get
+            Return aReceptorPais
+        End Get
+        Set(value As String)
+            aReceptorPais = value
         End Set
     End Property
 End Class
