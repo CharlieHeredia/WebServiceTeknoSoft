@@ -110,9 +110,10 @@ Public Class Conexion
         Dim TextoMoneda As String = ""
         Dim textoDescuento As String = ""
         Dim textoRelacion As String = ""
+        Dim textolimitetotal As String = ""
         
         '<-------------------------------------- INFORMACIÓN DEL RECEPTOR.'
-        Dim cmd As New SqlCommand("SELECT admClientes.CRFC,admClientes.CRAZONSOCIAL,CUSOCFDI,admDocumentos.CIMPUESTO1,admDocumentos.CIDMONEDA,admMonedas.CCLAVESAT,admDocumentos.CTIPOCAMBIO,admDocumentos.CSERIEDOCUMENTO,admDocumentos.CLUGAREXPE from admDocumentos INNER JOIN admClientes on admClientes.CIDCLIENTEPROVEEDOR = admDocumentos.CIDCLIENTEPROVEEDOR INNER JOIN admMonedas on admMonedas.CIDMONEDA = admDocumentos.CIDMONEDA WHERE CFOLIO = " & Folio & " AND CIDDOCUMENTODE = 4", ConexionesSQL)
+        Dim cmd As New SqlCommand("SELECT admClientes.CRFC,admClientes.CRAZONSOCIAL,CUSOCFDI,admDocumentos.CIMPUESTO1,admDocumentos.CIDMONEDA,admMonedas.CCLAVESAT,admDocumentos.CTIPOCAMBIO,admDocumentos.CSERIEDOCUMENTO,admDocumentos.CLUGAREXPE,admDocumentos.CNETO,admDocumentos.CTOTAL from admDocumentos INNER JOIN admClientes on admClientes.CIDCLIENTEPROVEEDOR = admDocumentos.CIDCLIENTEPROVEEDOR INNER JOIN admMonedas on admMonedas.CIDMONEDA = admDocumentos.CIDMONEDA WHERE CFOLIO = " & Folio & " AND CIDDOCUMENTODE = 4", ConexionesSQL)
         adaptador.SelectCommand = cmd 'EJECUCION DEL COMANDO SQL.'
         '<---------------------- TERMINA CONSULTA SQL --------------------------------->'
         adaptador.Fill(ds)
@@ -128,6 +129,8 @@ Public Class Conexion
             Factura._aTipoÇambio = row(6).ToString.Trim() 'TIPO DE CAMBIO.'
             Factura._aSerie = row(7).ToString.Trim() 'SERIE DEL DOCUMENTO.'
             DatosReceptor._Direccion = row(8).ToString.Trim() 'DIRECCIÓN DEL LUGAR DE EXPEDICIÓN.'
+            Factura._aNeto = row(9).ToString.Trim() 'Importe del total del neto para el documento. '
+            Factura._aTotal = row(10).ToString.Trim() 'Importe del total de los totales de los movimientos para el documento.'
         Next
 
         MsgBox("Texto recogido: " & renglon)
@@ -212,7 +215,7 @@ Public Class Conexion
             DatosComprobante._folio = row(1).ToString.Trim() 'FOLIO'
             DatosComprobante._fecha = row(2).ToString.Trim() 'FECHA'
             DatosComprobante._metodoDePago = row(3).ToString.Trim() 'MÉTODO DE PAGO'
-            DatosComprobante._lugarExpedicion = row(4).ToString.Trim() 'LUGAR DE EXPEDICIÓN.'
+            DatosComprobante._lugarExpedicion = row(4).ToString.Trim() 'LUGAR DE EXPEDICIÓN. SE UTILIZA PARA OBTENER EL CODIGO POSTAL'
             DatosComprobante._ClaveSATMoneda = row(5).ToString.Trim() 'CLAVE SAT MONEDA'
             DatosComprobante._tipoDeComprobante = row(6).ToString.Trim() 'NATURALEZA'
             'FORMA DE PAGO. <-----   FALTANTE'
@@ -303,31 +306,16 @@ Public Class Conexion
         '    End If
         '    'textoDescuento2 = """"
         'End If
-        If relacion Then
-            textoRelacion = """ FolioFiscalOrig=""" & facturaxml._FechaFolioFiscalOrig & """ SerieFolioFiscalOrig=""" & facturaxml._SerieFolioFiscalOrig _
-                & """ FechaFolioFiscalOrig=""" & facturaxml._FechaFolioFiscalOrig & """ MontoFolioFiscalOrig=""" & facturaxml._MontoFolioFiscalOrig
-        Else
-            textoRelacion = ""
-        End If
         'DATOS DE DIRECCIÓN'
-        Dim text() As String = Split(DatosReceptor._Direccion, ",")
-        todotexto = "<?xml version=""1.0"" encoding=""UTF-8""?><cfdi:Comprobante xmlns:cfdi=""http://www.sat.gob.mx/cfd/3"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance""" _
-              & " xsi:schemaLocation=""http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv32.xsd""" & vbCrLf & "version=""3.2""" _
-              & " serie=""" & Factura._aSerie & """ folio=""" & Factura._aFolio & """ fecha=""" & fecha & """ formaDePago=""" & DatosComprobante._formaDePago & """" & vbCrLf & "" _
-              & " subTotal=""" & facturaxml._subTotal & textoDescuento & TextoMoneda & """ total=""" & facturaxml._total & """ tipoDeComprobante=""" & facturaxml._tipoDeComprobante & """" & vbCrLf & "" _
-              & " metodoDePago=""" & facturaxml._metodoDePago & """ LugarExpedicion=""" & facturaxml._EmisorDomFiscalCalle & " " _
-              & facturaxml._emisorDomFiscalnoExt & " " & facturaxml._emisorDomFiscalnoInt & ", " & facturaxml._emisorDomFiscalColonia & ", " _
-              & facturaxml._emisorDomfiscalCP & ", " & facturaxml._emisorDomFiscalLocalidad & ", " & facturaxml._emisorDomFiscalMunicipio & ", " & facturaxml._emisorDomFiscalEstado & ", " & facturaxml._emisorDomFiscalPais & """" & vbCrLf & "NumCtaPago=""" & facturaxml._NumCtaPago & textoRelacion & """>" _
-          & "<cfdi:Emisor rfc=""" & facturaxml._EmisorRFC & """ nombre=""" & facturaxml._EmisorNombre & """>" _
-  & "<cfdi:DomicilioFiscal calle=""" & facturaxml._EmisorDomFiscalCalle & """ noExterior=""" & facturaxml._emisorDomFiscalnoExt & """ noInterior=""" & facturaxml._emisorDomFiscalnoInt & """ colonia=""" _
-              & facturaxml._emisorDomFiscalColonia & """ localidad=""" & facturaxml._emisorDomFiscalLocalidad & """ municipio=""" & facturaxml._emisorDomFiscalMunicipio & """ estado=""" & facturaxml._emisorDomFiscalEstado _
-              & """ pais=""" & facturaxml._emisorDomFiscalPais & """ codigoPostal=""" & facturaxml._emisorDomfiscalCP & """/>" & vbCrLf & "<cfdi:RegimenFiscal Regimen=""" & facturaxml._RegimenFiscal & """/></cfdi:Emisor>" _
-& "<cfdi:Receptor rfc=""" & DatosReceptor._RFC & """ nombre=""" & facturaxml._receptorNombre & """>" _
-& "<cfdi:Domicilio calle=""" & Factura._aReceptorCalle & """ noInterior=""" & Factura._aReceptorNumInterior & """ colonia=""" _
-               & Factura._aReceptorColonia & """ localidad=""" & Factura._aReceptorLocalidad & """ municipio=""" _
-               & Factura._aReceptorMunicipio & """ estado=""" & Factura._aReceptorEstado & """ pais=""" & Factura._aReceptorPais _
-               & """ codigoPostal=""" & Factura._aReceptorCodigoPostal & """/></cfdi:Receptor>" & vbCrLf & "" _
-& "<cfdi:Conceptos>" & vbCrLf & ""
+        Dim text() As String = Split(DatosComprobante._lugarExpedicion, ",")
+        todotexto = "<?xml version=""1.0"" encoding=""UTF-8""?>" & vbCrLf & "<cfdi:Comprobante xmlns:cfdi=""http://www.sat.gob.mx/cfd/3"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance""" _
+                                   & " xsi:schemaLocation=""http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd"" " & vbCrLf & "Version=""3.3""" _
+                                   & " Serie=""" & Factura._aSerie & """ Folio=""" & Factura._aFolio & """ Fecha=""" & fecha & """" & vbCrLf & " FormaPago=""" & DatosComprobante._formaDePago & """" & vbCrLf _
+                                   & " SubTotal=""" & Factura._aNeto.Replace(",", "") & TextoMoneda & textoDescuento & """ Total=""" & Factura._aTotal.Replace(",", "") & """ TipoDeComprobante=""" & DatosComprobante._tipoDeComprobante & """" _
+                                   & " MetodoPago=""" & DatosComprobante._metodoDePago & """ LugarExpedicion=""" & DatosEmisor._CodigoPostal & textolimitetotal _
+                                   & textoRelacion & vbCrLf & "<cfdi:Emisor Rfc=""" & DatosEmisor._rfc & """ Nombre=""" & DatosEmisor._NombreEmpresa & """ RegimenFiscal=""" & DatosEmisor._regimenFiscal & """/>" _
+                                   & vbCrLf & "<cfdi:Receptor Rfc=""" & DatosReceptor._RFC & """ Nombre=""" & DatosReceptor._razonsocial & """ UsoCFDI=""" & DatosReceptor._usocfdi & """/>" _
+                                   & vbCrLf & "<cfdi:Conceptos>" & vbCrLf
         Dim cantidadTotalIva As Double = 0
         Dim TotalImpuestoTrasAsis As Double = 0.0
         For Each producto As Concepto In DatosConcepto

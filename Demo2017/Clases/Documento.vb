@@ -29,6 +29,8 @@
     Dim aReceptorCodigoPostal As String = ""
     Dim aReceptorCalle As String = ""
     Dim aReceptorPais As String = ""
+    Dim aNeto As String = "" 'Importe del total del neto para el documento. '
+    Dim aTotal As String = "" 'Importe del total de los totales de los movimientos para el documento.'
     'Documento'
     Public Property _aIdDocumento() As String
         Get
@@ -268,6 +270,22 @@
         End Get
         Set(value As String)
             aReceptorPais = value
+        End Set
+    End Property
+    Public Property _aNeto() As String
+        Get
+            Return aNeto
+        End Get
+        Set(value As String)
+            aNeto = value
+        End Set
+    End Property
+    Public Property _aTotal() As String
+        Get
+            Return aTotal
+        End Get
+        Set(value As String)
+            aTotal = value
         End Set
     End Property
 End Class

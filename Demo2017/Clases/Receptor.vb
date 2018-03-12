@@ -3,6 +3,7 @@
     Dim RFC As String = "" 'RFC.'
     Dim usocfdi As String = "" ' USOCFDI.'
     Dim Direccion As String = "" 'DIRECCIÓN COMPLETA (SEPARADA POR COMAS.')
+    Dim Nombre As String = "" 'NOMBRE DEL RECEPTOR.'
 
     'Datos Receptor'
     Public Property _razonsocial() As String
@@ -35,6 +36,14 @@
         End Get
         Set(value As String)
             Direccion = value
+        End Set
+    End Property
+    Public Property _Nombre() As String
+        Get
+            Return Nombre
+        End Get
+        Set(value As String)
+            Nombre = value
         End Set
     End Property
 End Class

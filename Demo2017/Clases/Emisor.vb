@@ -10,6 +10,7 @@
     Dim NombreImpuesto1 As String = ""
     Dim NombreImpuesto2 As String = ""
     Dim NombreImpuesto3 As String = ""
+    Dim CodigoPostal As String = ""
 
     Public Property _IdEmpresa() As String
         Get
@@ -97,6 +98,14 @@
         End Get
         Set(value As String)
             NombreImpuesto3 = value
+        End Set
+    End Property
+    Public Property _CodigoPostal() As String
+        Get
+            Return CodigoPostal
+        End Get
+        Set(value As String)
+            CodigoPostal = value
         End Set
     End Property
 End Class
