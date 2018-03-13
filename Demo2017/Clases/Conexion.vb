@@ -312,7 +312,7 @@ Public Class Conexion
                                    & " xsi:schemaLocation=""http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd"" " & vbCrLf & "Version=""3.3""" _
                                    & " Serie=""" & Factura._aSerie & """ Folio=""" & Factura._aFolio & """ Fecha=""" & fecha & """" & vbCrLf & " FormaPago=""" & DatosComprobante._formaDePago & """" & vbCrLf _
                                    & " SubTotal=""" & Factura._aNeto.Replace(",", "") & TextoMoneda & textoDescuento & """ Total=""" & Factura._aTotal.Replace(",", "") & """ TipoDeComprobante=""" & DatosComprobante._tipoDeComprobante & """" _
-                                   & " MetodoPago=""" & DatosComprobante._metodoDePago & """ LugarExpedicion=""" & DatosEmisor._CodigoPostal & textolimitetotal _
+                                   & " MetodoPago=""" & DatosComprobante._metodoDePago & """ LugarExpedicion=""" & DatosEmisor._CodigoPostal & textolimitetotal & """>" _
                                    & textoRelacion & vbCrLf & "<cfdi:Emisor Rfc=""" & DatosEmisor._rfc & """ Nombre=""" & DatosEmisor._NombreEmpresa & """ RegimenFiscal=""" & DatosEmisor._regimenFiscal & """/>" _
                                    & vbCrLf & "<cfdi:Receptor Rfc=""" & DatosReceptor._RFC & """ Nombre=""" & DatosReceptor._razonsocial & """ UsoCFDI=""" & DatosReceptor._usocfdi & """/>" _
                                    & vbCrLf & "<cfdi:Conceptos>" & vbCrLf
